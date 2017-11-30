@@ -6,6 +6,7 @@
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
       <module fileurl="file://$PROJECT_DIR$/easyrouter-annotation/easyrouter-annotation.iml" filepath="$PROJECT_DIR$/easyrouter-annotation/easyrouter-annotation.iml" />
       <module fileurl="file://$PROJECT_DIR$/easyrouter-compiler/easyrouter-compiler.iml" filepath="$PROJECT_DIR$/easyrouter-compiler/easyrouter-compiler.iml" />
+      <module fileurl="file://$PROJECT_DIR$/easyrouter-library/easyrouter-library.iml" filepath="$PROJECT_DIR$/easyrouter-library/easyrouter-library.iml" />
     </modules>
   </component>
 </project>

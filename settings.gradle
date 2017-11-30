@@ -1,1 +1,1 @@
-include ':app', ':easyrouter-compiler', ':easyrouter-annotation'
+include ':app', ':easyrouter-compiler', ':easyrouter-annotation', ':easyrouter-library'

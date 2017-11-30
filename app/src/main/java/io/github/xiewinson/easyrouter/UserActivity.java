@@ -9,34 +9,34 @@ import android.view.View;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import io.github.xiewinson.easyrouter.annotation.Param;
+import io.github.xiewinson.easyrouter.annotation.IntentParam;
 import io.github.xiewinson.easyrouter.annotation.Router;
-import io.github.xiewinson.easyrouter.router.EasyRouter;
+import io.github.xiewinson.easyrouter.core.EasyRouter;
 
 @Router(path = "user")
 public class UserActivity extends AppCompatActivity {
 
-    @Param("user_name")
+    @IntentParam("user_name")
     String name;
 
-    @Param
+    @IntentParam
     Bitmap bitmap;
 
-    @Param
+    @IntentParam
     int[] data;
 
-    @Param
+    @IntentParam
     ArrayList<Bitmap> images;
 
-    @Param
+    @IntentParam
     HashMap<View, String> is;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_user);
-        EasyRouter.inject(this);
-
+        EasyRouter.injectIntentParams(this);
         Log.d("winson", "name ->" + name);
+
     }
 }

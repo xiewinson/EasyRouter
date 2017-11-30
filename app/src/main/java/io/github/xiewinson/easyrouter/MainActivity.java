@@ -1,6 +1,5 @@
 package io.github.xiewinson.easyrouter;
 
-import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
@@ -9,13 +8,10 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import io.github.xiewinson.easyrouter.annotation.Router;
-import io.github.xiewinson.easyrouter.router.EasyRouter;
+import io.github.xiewinson.easyrouter.core.EasyRouter;
 
 
 @Router(path = "/main")
@@ -34,11 +30,17 @@ public class MainActivity extends AppCompatActivity {
         findViewById(R.id.fab).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(EasyRouter.user(MainActivity.this, "我的名字是谢豪", null, new int[]{1, 2, 3}, new ArrayList<Bitmap>(), new HashMap<View, String>()));
+                EasyRouter
+                        .userBuilder(MainActivity.this)
+                        .bitmap(null)
+                        .name("哈哈哈")
+                        .build()
+                        .navigation(MainActivity.this);
+
             }
         });
-
     }
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

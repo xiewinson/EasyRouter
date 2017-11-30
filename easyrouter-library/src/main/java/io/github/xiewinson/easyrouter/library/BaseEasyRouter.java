@@ -1,25 +1,28 @@
-package io.github.xiewinson.easyrouter.annotation;
+package io.github.xiewinson.easyrouter.library;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.LinkedHashMap;
 
+import io.github.xiewinson.easyrouter.annotation.Constants;
+
 /**
- * Created by winson on 2017/11/28.
+ * Created by winson on 2017/11/29.
  */
 
-public abstract class BaseRouter {
+public abstract class BaseEasyRouter {
+    private LinkedHashMap<Class, Constructor<?>> paramInjectorMap = new LinkedHashMap<>();
 
-    private static LinkedHashMap<String, Constructor<?>> map = new LinkedHashMap<>();
-
-    public static void inject(Object object) {
-        String name = object.getClass().getName();
-        Constructor<?> constructor = map.get(name);
+    protected void injectIntentParamsInternel(Object object) {
+        Class<?> key = object.getClass();
+        Constructor<?> constructor = paramInjectorMap.get(key);
         if (constructor == null) {
             try {
                 try {
-                    constructor = Class.forName(name + "_" + "IntentBinding").getConstructor(object.getClass());
-                    map.put(name, constructor);
+                    constructor = Class.forName(key.getName() + Constants._INTENT_PARAM_INJECTOR).getConstructor(key);
+                    if (constructor != null) {
+                        paramInjectorMap.put(key, constructor);
+                    }
                 } catch (NoSuchMethodException e) {
                     e.printStackTrace();
                 }
