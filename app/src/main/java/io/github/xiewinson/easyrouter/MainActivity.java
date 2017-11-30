@@ -35,7 +35,7 @@ public class MainActivity extends AppCompatActivity {
                         .bitmap(null)
                         .name("哈哈哈")
                         .build()
-                        .navigation(MainActivity.this);
+                        .navigation();
 
             }
         });

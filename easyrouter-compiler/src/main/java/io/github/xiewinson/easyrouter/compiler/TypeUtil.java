@@ -34,6 +34,10 @@ public class TypeUtil {
         return RouterClass.OTHRER;
     }
 
+    public static boolean isFragmentOrV4(RouterClass routerClass) {
+        return routerClass == RouterClass.FRAGMENT || routerClass == RouterClass.FRAGMENT_V4;
+    }
+
     public enum RouterClass {
         ACTIVITY,
         FRAGMENT,

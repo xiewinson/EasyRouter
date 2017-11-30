@@ -36,7 +36,11 @@ public class FragmentRequest<T> {
             this.cls = acls;
         }
 
-        public FragmentRequest bulid() {
+        public Bundle getBundle() {
+            return bundle;
+        }
+
+        public FragmentRequest<T> bulid() {
             return new FragmentRequest<>(cls, bundle);
         }
     }

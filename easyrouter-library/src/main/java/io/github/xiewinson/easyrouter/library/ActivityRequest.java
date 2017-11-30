@@ -11,8 +11,11 @@ public class ActivityRequest {
 
     private Intent intent;
 
-    private ActivityRequest(Intent intent) {
+    private Context context;
+
+    public ActivityRequest(Context context, Intent intent) {
         this.intent = intent;
+        this.context = context;
     }
 
     public Intent asIntent() {
@@ -20,7 +23,7 @@ public class ActivityRequest {
     }
 
 
-    public void navigation(Context context) {
+    public void navigation() {
         context.startActivity(intent);
     }
 
@@ -28,12 +31,15 @@ public class ActivityRequest {
     public static abstract class Builder {
         private Intent intent;
 
-        protected Builder(Intent intent) {
+        private Context context;
+
+        protected Builder(Context context, Intent intent) {
+            this.context = context;
             this.intent = intent;
         }
 
         public ActivityRequest build() {
-            return new ActivityRequest(intent);
+            return new ActivityRequest(context, intent);
         }
 
         protected Intent getIntent() {

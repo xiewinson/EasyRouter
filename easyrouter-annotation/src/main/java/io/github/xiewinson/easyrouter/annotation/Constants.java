@@ -12,6 +12,7 @@ public class Constants {
     public static final String LIBRARY_PACKAGE_NAME = "io.github.xiewinson.easyrouter.library";
     public static final String BASE_EASY_ROUTER = "BaseEasyRouter";
     public static final String ACTIVITY_REQUEST = "ActivityRequest";
+    public static final String FRAGMENT_REQUEST = "FragmentRequest";
     public static final String BUILDER = "Builder";
 
     public static final String _INTENT_PARAM_INJECTOR = "_IntentParamInjector";

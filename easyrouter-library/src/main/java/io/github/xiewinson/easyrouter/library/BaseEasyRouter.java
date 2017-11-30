@@ -13,7 +13,7 @@ import io.github.xiewinson.easyrouter.annotation.Constants;
 public abstract class BaseEasyRouter {
     private LinkedHashMap<Class, Constructor<?>> paramInjectorMap = new LinkedHashMap<>();
 
-    protected void injectIntentParamsInternel(Object object) {
+    protected void injectIntentParamsInternal(Object object) {
         Class<?> key = object.getClass();
         Constructor<?> constructor = paramInjectorMap.get(key);
         if (constructor == null) {
