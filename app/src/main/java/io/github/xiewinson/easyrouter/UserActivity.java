@@ -6,8 +6,11 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 import io.github.xiewinson.easyrouter.annotation.IntentParam;
 import io.github.xiewinson.easyrouter.annotation.Router;
@@ -26,17 +29,23 @@ public class UserActivity extends AppCompatActivity {
     int[] data;
 
     @IntentParam
-    ArrayList<Bitmap> images;
+    ArrayList<View> images;
 
-    @IntentParam
-    HashMap<View, String> is;
+//    @IntentParam
+//    HashMap<U, String> is;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_user);
         EasyRouter.injectIntentParams(this);
-        Log.d("winson", "name ->" + name);
+        Class<ArrayList> arrayListClass = ArrayList.class;
+        List<View> zzz = new ArrayList<>();
+        Type type = zzz.getClass().getGenericSuperclass();
+        Type[] actualTypeArguments = ((ParameterizedType) type).getActualTypeArguments();
+
+        Bundle bundle;
+        Log.d("winson", "result ->" + actualTypeArguments[0]);
 
     }
 }

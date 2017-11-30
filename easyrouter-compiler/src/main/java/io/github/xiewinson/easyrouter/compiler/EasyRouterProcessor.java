@@ -9,6 +9,7 @@ import com.squareup.javapoet.TypeName;
 import com.squareup.javapoet.TypeSpec;
 
 import java.io.IOException;
+import java.lang.reflect.ParameterizedType;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -74,7 +75,9 @@ public class EasyRouterProcessor extends AbstractProcessor {
                 .addMethod(MethodSpec.methodBuilder("getInstance")
                         .addModifiers(Modifier.PUBLIC, Modifier.STATIC, Modifier.SYNCHRONIZED)
                         .returns(easyRouterClsName)
-                        .addStatement("if(instance == null) instance = new " + easyRouterClsName.simpleName() + "()")
+                        .beginControlFlow("if(instance == null)")
+                        .addStatement("instance = new $L()", easyRouterClsName.simpleName())
+                        .endControlFlow()
                         .addStatement("return instance")
                         .build())
                 .addMethod(MethodSpec.methodBuilder("injectIntentParams")
@@ -117,12 +120,10 @@ public class EasyRouterProcessor extends AbstractProcessor {
             if (routerClassType == TypeUtil.RouterClass.ACTIVITY) {
                 requestBuilder
                         .superclass(ClassName.get(Constants.LIBRARY_PACKAGE_NAME + Constants.DOT + Constants.ACTIVITY_REQUEST, Constants.BUILDER))
-//                        .addField(FieldSpec.builder(context, "context").build())
                         .addMethod(
                                 MethodSpec.constructorBuilder()
                                         .addParameter(context, "context")
-                                        .addStatement("super(context, new " + intent.reflectionName() + "(context, " + routerClassElem.asType() + ".class))")
-//                                        .addStatement("this.context = context")
+                                        .addStatement("super(context, new $L(context, $L.class))", intent.reflectionName(), routerClassElem.asType())
                                         .build());
             } else if (TypeUtil.isFragmentOrV4(routerClassType)) {
                 requestBuilder
@@ -131,7 +132,7 @@ public class EasyRouterProcessor extends AbstractProcessor {
                                         ClassName.get(routerClassElem.asType())))
                         .addMethod(
                                 MethodSpec.constructorBuilder()
-                                        .addStatement("super(" + routerClassElem.getSimpleName() + ".class, new android.os.Bundle())")
+                                        .addStatement("super($L.class, new android.os.Bundle())", routerClassElem.getSimpleName())
                                         .build());
             }
 
@@ -143,7 +144,7 @@ public class EasyRouterProcessor extends AbstractProcessor {
                     .addModifiers(Modifier.PUBLIC)
                     .addParameter(target, "target");
             if (TypeUtil.isActivity(processingEnv, routerClassElem.asType())) {
-                activityConstructor.addStatement(intent.toString() + " intent = target.getIntent()")
+                activityConstructor.addStatement("$L intent = target.getIntent()", intent.toString())
                         .addStatement("android.os.Bundle extras = intent.getExtras()");
             } else if (TypeUtil.isFragment(processingEnv, routerClassElem.asType()) || TypeUtil.isFragmentV4(processingEnv, routerClassElem.asType())) {
                 activityConstructor.addStatement("android.os.Bundle extras = target.getArguments()");
@@ -164,16 +165,22 @@ public class EasyRouterProcessor extends AbstractProcessor {
                             .addModifiers(Modifier.PUBLIC)
                             .addParameter(ClassName.get(var.asType()), paramAlias)
                             .returns(innerClsName);
+
+
+//                    print(ParameterizedTypeName.get(var.asType()).);
                     if (routerClassType == TypeUtil.RouterClass.ACTIVITY) {
-                        innerMethed.addStatement("getIntent().putExtra(\"" + paramAlias + "\", " + paramAlias + ")");
+                        innerMethed.addStatement("getIntent().putExtra($S, $L)", paramAlias, paramAlias);
                     } else if (TypeUtil.isFragmentOrV4(routerClassType)) {
                     }
 
                     requestBuilder.addMethod(innerMethed.addStatement("return this").build());
 
                     //intent/arguments参数解析
-                    activityConstructor.addStatement("Object " + paramAlias + " = extras.get(\"" + paramAlias + "\")");
-                    activityConstructor.addStatement("if(" + paramAlias + " != null) target." + paramName + " = (" + var.asType() + ")" + paramAlias);
+                    activityConstructor
+                            .addStatement("Object $L = extras.get($S)", paramAlias, paramAlias)
+                            .beginControlFlow("if($L != null) ", paramAlias)
+                            .addStatement("target.$L = ($L)$L", paramName, var.asType(), paramAlias)
+                            .endControlFlow();
                 }
             }
 
@@ -184,9 +191,9 @@ public class EasyRouterProcessor extends AbstractProcessor {
             if (routerClassType == TypeUtil.RouterClass.ACTIVITY) {
                 quickMethod
                         .addParameter(context, "context")
-                        .addStatement("return new " + innerClsName.simpleName() + "(context)");
+                        .addStatement("return new $L(context)", innerClsName.simpleName());
             } else if (TypeUtil.isFragmentOrV4(routerClassType)) {
-                quickMethod.addStatement("return new " + innerClsName.simpleName() + "()");
+                quickMethod.addStatement("return new $L()", innerClsName.simpleName());
 
             }
             easyRouter.addMethod(quickMethod.build());

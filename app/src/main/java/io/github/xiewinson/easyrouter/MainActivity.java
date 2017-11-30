@@ -7,6 +7,10 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.TextView;
+
+import java.util.ArrayList;
+import java.util.HashMap;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -27,20 +31,26 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
         setSupportActionBar(toolbar);
+        final ArrayList<View> views = new ArrayList<>();
+        TextView tv = new TextView(this);
+        views.add(tv);
+
+        final HashMap<U, String> map = new HashMap<>();
+        map.put(new U(), "ssss");
         findViewById(R.id.fab).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 EasyRouter
                         .userBuilder(MainActivity.this)
-                        .bitmap(null)
+//                        .images(views)
                         .name("哈哈哈")
+//                        .is(map)
                         .build()
                         .navigation();
 
             }
         });
     }
-
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
