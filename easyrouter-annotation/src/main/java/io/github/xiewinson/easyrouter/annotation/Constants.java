@@ -6,11 +6,13 @@ package io.github.xiewinson.easyrouter.annotation;
 
 public class Constants {
     public static final String PACKAGE_NAME = "io.github.xiewinson.easyrouter.core";
-    public static final String EASY_ROUTER = "EasyRouter";
+    public static final String EASY_ROUTER_MANAGER = "EasyRouterManager";
+    public static final String ACTIVITY_ROUTER = "ActivityRouter";
+    public static final String FRAGMENT_ROUTER = "FragmentRouter";
 
     public static final String DOT = ".";
     public static final String LIBRARY_PACKAGE_NAME = "io.github.xiewinson.easyrouter.library";
-    public static final String BASE_EASY_ROUTER = "BaseEasyRouter";
+    public static final String BASE_EASY_ROUTER = "BaseEasyRouterManager";
     public static final String ACTIVITY_REQUEST = "ActivityRequest";
     public static final String FRAGMENT_REQUEST = "FragmentRequest";
     public static final String BUILDER = "Builder";

@@ -1,6 +1,5 @@
 package io.github.xiewinson.easyrouter;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 
 /**
@@ -8,4 +7,7 @@ import java.util.ArrayList;
  */
 
 public class U extends ArrayList<String> {
+    public U(int initialCapacity) {
+        super(initialCapacity);
+    }
 }

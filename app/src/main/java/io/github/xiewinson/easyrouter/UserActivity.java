@@ -9,12 +9,11 @@ import android.view.View;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 import io.github.xiewinson.easyrouter.annotation.IntentParam;
 import io.github.xiewinson.easyrouter.annotation.Router;
-import io.github.xiewinson.easyrouter.core.EasyRouter;
+import io.github.xiewinson.easyrouter.core.EasyRouterManager;
 
 @Router(path = "user")
 public class UserActivity extends AppCompatActivity {
@@ -38,7 +37,7 @@ public class UserActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_user);
-        EasyRouter.injectIntentParams(this);
+        EasyRouterManager.injectIntentParams(this);
         Class<ArrayList> arrayListClass = ArrayList.class;
         List<View> zzz = new ArrayList<>();
         Type type = zzz.getClass().getGenericSuperclass();

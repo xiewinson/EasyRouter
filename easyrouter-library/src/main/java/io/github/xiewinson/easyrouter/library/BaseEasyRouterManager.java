@@ -10,7 +10,7 @@ import io.github.xiewinson.easyrouter.annotation.Constants;
  * Created by winson on 2017/11/29.
  */
 
-public abstract class BaseEasyRouter {
+public abstract class BaseEasyRouterManager {
     private LinkedHashMap<Class, Constructor<?>> paramInjectorMap = new LinkedHashMap<>();
 
     protected void injectIntentParamsInternal(Object object) {

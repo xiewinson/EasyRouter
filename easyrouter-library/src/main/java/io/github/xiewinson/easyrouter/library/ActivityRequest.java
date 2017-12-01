@@ -13,7 +13,7 @@ public class ActivityRequest {
 
     private Context context;
 
-    public ActivityRequest(Context context, Intent intent) {
+    private ActivityRequest(Context context, Intent intent) {
         this.intent = intent;
         this.context = context;
     }

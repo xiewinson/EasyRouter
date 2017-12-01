@@ -15,7 +15,7 @@ import java.util.HashMap;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import io.github.xiewinson.easyrouter.annotation.Router;
-import io.github.xiewinson.easyrouter.core.EasyRouter;
+import io.github.xiewinson.easyrouter.core.EasyRouterManager;
 
 
 @Router(path = "/main")
@@ -36,18 +36,20 @@ public class MainActivity extends AppCompatActivity {
         views.add(tv);
 
         final HashMap<U, String> map = new HashMap<>();
-        map.put(new U(), "ssss");
         findViewById(R.id.fab).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                EasyRouter
-                        .userBuilder(MainActivity.this)
-//                        .images(views)
-                        .name("哈哈哈")
-//                        .is(map)
-                        .build()
-                        .navigation();
-
+                //                EasyRouter.activity().mainBuilder(MainActivity.this).build();
+//                EasyRouter
+//                        .userBuilder(MainActivity.this)
+////                        .images(views)
+//                        .name("哈哈哈")
+////                        .is(map)
+//                        .build()
+//                        .navigation();
+//                new EasyRouter.ActivityRouter().mainBuilder();
+                EasyRouterManager.activity().userBuilder(MainActivity.this).bitmap(null).build();
+                EasyRouterManager.fragment().studentFragmentBuilder().bulid().asFragment();
             }
         });
     }
