@@ -86,7 +86,7 @@ public class EasyRouterProcessor extends AbstractProcessor {
         if (elements.isEmpty()) return;
 
         //建立EasyRouter类
-        ClassName easyRouterClsName = ClassName.get(Constants.PACKAGE_NAME, Constants.EASY_ROUTER_MANAGER);
+        ClassName easyRouterClsName = ClassName.get("", Constants.EASY_ROUTER_MANAGER);
         TypeSpec.Builder easyRouter = TypeSpec.classBuilder(easyRouterClsName)
                 .superclass(ClassName.get(Constants.LIBRARY_PACKAGE_NAME, Constants.BASE_EASY_ROUTER))
                 .addField(FieldSpec.builder(easyRouterClsName, "instance", Modifier.PRIVATE, Modifier.STATIC).build())
@@ -252,9 +252,9 @@ public class EasyRouterProcessor extends AbstractProcessor {
 
         }
         try {
-            JavaFile.builder(easyRouterClsName.packageName(), activityRouterBuilder.build()).build().writeTo(filer);
-            JavaFile.builder(easyRouterClsName.packageName(), fragmentRouterBuilder.build()).build().writeTo(filer);
-            JavaFile.builder(easyRouterClsName.packageName(), easyRouter.build()).build().writeTo(filer);
+            JavaFile.builder(Constants.PACKAGE_NAME, activityRouterBuilder.build()).build().writeTo(filer);
+            JavaFile.builder(Constants.PACKAGE_NAME, fragmentRouterBuilder.build()).build().writeTo(filer);
+            JavaFile.builder(Constants.PACKAGE_NAME, easyRouter.build()).build().writeTo(filer);
         } catch (IOException e) {
             e.printStackTrace();
         }
