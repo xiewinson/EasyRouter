@@ -10,7 +10,6 @@ import com.squareup.javapoet.TypeSpec;
 import com.squareup.javapoet.WildcardTypeName;
 
 import java.io.IOException;
-import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -227,7 +226,7 @@ public class EasyRouterProcessor extends AbstractProcessor {
                             .returns(innerClsName);
 
                     //添加extra
-                    innerMethed.addStatement("getBundle().put$L($S, $L)", BundleHelper.buildPutExtraStatement(processingEnv, paramType), paramAlias, paramAlias);
+                    innerMethed.addStatement("getBundle().put$L($S, $L)", BundleStatementHelper.buildPutExtraStatement(processingEnv, paramType), paramAlias, paramAlias);
                     requestBuilder.addMethod(innerMethed.addStatement("return this").build());
 
                     //intent/arguments参数解析
@@ -247,7 +246,7 @@ public class EasyRouterProcessor extends AbstractProcessor {
                     }
                     activityConstructor.endControlFlow();
 
-//                    activityConstructor.addStatement("target.$L = " + castStr + "extras.get$L($S)", paramName, BundleHelper.buildPutExtraStatement(processingEnv, paramType), paramAlias);
+//                    activityConstructor.addStatement("target.$L = " + castStr + "extras.get$L($S)", paramName, BundleStatementHelper.buildPutExtraStatement(processingEnv, paramType), paramAlias);
                 }
             }
 

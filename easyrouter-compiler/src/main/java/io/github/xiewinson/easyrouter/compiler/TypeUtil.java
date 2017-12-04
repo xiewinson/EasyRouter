@@ -96,12 +96,16 @@ public class TypeUtil {
     public static final String ARRAY_LIST_STRING = ARRAY_LIST + "<" + STRING + ">";
     public static final String ARRAY_LIST_CHAR_SEQUENCE = ARRAY_LIST + "<" + CHAR_SEQUENCE + ">";
 
+    public static final String SIZE = "android.util.Size";
+    public static final String SIZEF = "android.util.SizeF";
+
     public static final String BUNDLE = "android.os.Bundle";
     public static final String PARCELABLE = "android.os.Parcelable";
     public static final String ARRAY_PARCELABLE = PARCELABLE + "[]";
     public static final String ARRAY_LIST_PARCELABLE = ARRAY_LIST + "<" + PARCELABLE + ">";
 
     public static final String SERIALIZABLE = "java.io.Serializable";
+    public static final String SPARSE_ARRAY = "android.util.SparseArray";
 
     public static TYPE_KIND getType(ProcessingEnvironment environment, TypeMirror typeMirror) {
         String tm = typeMirror.toString();
@@ -129,6 +133,12 @@ public class TypeUtil {
         if (tm.equals(ARRAY_LIST_INTEGER)) return TYPE_KIND.ARRAY_LIST_INTEGER;
         if (tm.equals(ARRAY_LIST_STRING)) return TYPE_KIND.ARRAY_LIST_STRING;
         if (tm.equals(ARRAY_LIST_CHAR_SEQUENCE)) return TYPE_KIND.ARRAY_LIST_CHAR_SEQUENCE;
+        if (tm.equals(ARRAY_LIST_PARCELABLE) || tm.startsWith(ARRAY_LIST)) {
+            return TYPE_KIND.ARRAY_LIST_PARCELABLE;
+        }
+
+        if (tm.equals(SIZE)) return TYPE_KIND.SIZE;
+        if (tm.equals(SIZEF)) return TYPE_KIND.SIZEF;
 
         if (tm.equals(BUNDLE)) return TYPE_KIND.BUNDLE;
 
@@ -139,13 +149,16 @@ public class TypeUtil {
         if (tm.equals(ARRAY_PARCELABLE) || isSubType(environment, getArrayHoldClassName(tm), PARCELABLE)) {
             return TYPE_KIND.ARRAY_PARCELABLE;
         }
-        if (tm.equals(ARRAY_LIST_PARCELABLE) || (tm.startsWith(ARRAY_LIST) && isSubType(environment, getGenericClassName(tm), PARCELABLE))) {
-            return TYPE_KIND.ARRAY_LIST_PARCELABLE;
+
+        if (tm.equals(SPARSE_ARRAY) || tm.startsWith(SPARSE_ARRAY)) {
+            return TYPE_KIND.SPARSE_ARRAY;
         }
 
         if (tm.equals(SERIALIZABLE) || isSubType(environment, typeMirror, SERIALIZABLE)) {
             return TYPE_KIND.SERIALIZABLE;
         }
+
+
         return TYPE_KIND.PARCELABLE;
     }
 
@@ -159,7 +172,9 @@ public class TypeUtil {
             }
         }
         if (start >= chars.length) return clsName;
-        return clsName.substring(start, clsName.length() - 1);
+        return clsName.substring(start, clsName.length() - 1)
+                .replace("? extends ", "")
+                .replace("? super ", "");
     }
 
     public static String getArrayHoldClassName(String clsName) {
@@ -186,16 +201,20 @@ public class TypeUtil {
         ARRAY_BOOLEAN,
         ARRAY_STRING,
         ARRAY_CHAR_SEQUENCE,
+        BUNDLE,
+        SIZE,
+        SIZEF,
 
         ARRAY_LIST_INTEGER,
         ARRAY_LIST_STRING,
         ARRAY_LIST_CHAR_SEQUENCE,
 
-        BUNDLE,
         PARCELABLE,
         ARRAY_PARCELABLE,
         ARRAY_LIST_PARCELABLE,
         SERIALIZABLE,
+
+        SPARSE_ARRAY,
     }
 
 }

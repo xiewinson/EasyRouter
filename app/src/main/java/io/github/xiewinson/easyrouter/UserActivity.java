@@ -3,6 +3,8 @@ package io.github.xiewinson.easyrouter;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.os.Parcelable;
+import android.util.Size;
+import android.util.SizeF;
 import android.view.View;
 
 import java.lang.reflect.ParameterizedType;
@@ -41,6 +43,15 @@ public class UserActivity extends BaseActivity {
 
     @IntentParam
     HashMap<Integer, String> us;
+
+    @IntentParam
+    ArrayList<CharSequence> uuu;
+
+    @IntentParam
+    Size size;
+
+    @IntentParam
+    SizeF sizeF;
 
 //    @IntentParam
 //    HashMap<U, String> is;

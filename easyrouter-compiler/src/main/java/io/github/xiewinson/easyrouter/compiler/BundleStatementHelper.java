@@ -7,7 +7,7 @@ import javax.lang.model.type.TypeMirror;
  * Created by winson on 2017/11/30.
  */
 
-public class BundleHelper {
+public class BundleStatementHelper {
     public static String buildPutExtraStatement(ProcessingEnvironment environment, TypeMirror typeMirror) {
         StringBuilder sb = new StringBuilder();
         sb.append(getMethodByType(environment, typeMirror));
@@ -52,12 +52,17 @@ public class BundleHelper {
                 return "StringArray";
             case ARRAY_CHAR_SEQUENCE:
                 return "CharSequenceArray";
+            case SIZE:
+                return "Size";
+            case SIZEF:
+                return "SizeF";
             case ARRAY_LIST_INTEGER:
                 return "IntegerArrayList";
             case ARRAY_LIST_STRING:
                 return "StringArrayList";
             case ARRAY_LIST_CHAR_SEQUENCE:
                 return "CharSequenceArrayList";
+
             case BUNDLE:
                 return "Bundle";
             case PARCELABLE:

@@ -1,9 +1,13 @@
 package io.github.xiewinson.easyrouter;
 
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.widget.Toolbar;
+import android.util.Size;
+import android.util.SparseArray;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -18,6 +22,7 @@ import io.github.xiewinson.easyrouter.annotation.Constants;
 import io.github.xiewinson.easyrouter.annotation.Router;
 import io.github.xiewinson.easyrouter.core.AppRouterTable;
 import io.github.xiewinson.easyrouter.library.EasyRouter;
+import io.github.xiewinson.easyrouter.library.callback.IntentCallback;
 
 @Router(path = "/main")
 public class MainActivity extends BaseActivity {
@@ -36,7 +41,7 @@ public class MainActivity extends BaseActivity {
         TextView tv = new TextView(this);
         views.add(tv);
 
-        Bundle bundle = new Bundle();
+        final Bundle bundle = new Bundle();
         final HashMap<U, String> map = new HashMap<>();
         findViewById(R.id.fab).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -44,14 +49,17 @@ public class MainActivity extends BaseActivity {
 //                startActivity(new Intent(MainActivity.this, SecondActivity.class));
 //                new EasyRouter.ActivityRouter().mainBuilder();
                 HashMap<Integer, String> map = new HashMap<>();
-                ArrayList<Bitmap> bitmaps = new ArrayList<>();
-                Bitmap bitmap = Bitmap.createBitmap(100, 100, Bitmap.Config.RGB_565);
-                Bitmap[] data = {bitmap};
+                final ArrayList<Bitmap> bitmaps = new ArrayList<>();
+                final Bitmap bitmap = Bitmap.createBitmap(100, 100, Bitmap.Config.RGB_565);
+                final Bitmap[] data = {bitmap};
                 bitmaps.add(bitmap);
                 map.put(1, "555");
                 map.put(2, "000");
 //                EasyRouter.activity(Constants.ACTIVITY_PREFIX + "/user")
 //                        .withParam(null, null).build().navigation(MainActivity.this);
+
+                ArrayList<CharSequence> uuu = new ArrayList<>();
+                uuu.add("22");
 
                 AppRouterTable
                         .activity()
@@ -59,9 +67,24 @@ public class MainActivity extends BaseActivity {
                         .age(92)
                         .name("winson")
                         .us(map)
-                        .data(data)
-                        .images(bitmaps)
-                        .bitmap(bitmap)
+//                        .images()
+                        .uuu(uuu)
+//                        .data(data)
+//                        .images(bitmaps)
+//                        .bitmap(bitmap)
+//                        .withParam("data", data)
+//                        .withParam("images", bitmaps)
+//                        .withParam("bitmap", bitmap)
+                        .withIntentCallback(new IntentCallback() {
+                            @Override
+                            public void call(Intent intent) {
+                                bundle.putSparseParcelableArray(null, new SparseArray<Parcelable>());
+                                intent.putExtra("bitmap", bitmap);
+                                intent.putExtra("data", data);
+                                intent.putParcelableArrayListExtra("images", bitmaps);
+                                intent.putExtra("bitmap", bitmap);
+                            }
+                        })
                         .build()
                         .navigation(MainActivity.this);
 

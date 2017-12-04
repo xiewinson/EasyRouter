@@ -1,8 +1,5 @@
 package io.github.xiewinson.easyrouter.library;
 
-import android.content.Context;
-import android.net.Uri;
-
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
@@ -80,7 +77,7 @@ public class EasyRouter {
 
     public static final class ActivityRequestBuilder extends ActivityRequest.Builder<ActivityRequestBuilder> {
 
-        protected ActivityRequestBuilder(Class<?> cls) {
+        private ActivityRequestBuilder(Class<?> cls) {
             super(cls);
         }
     }
