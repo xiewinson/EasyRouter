@@ -1,8 +1,12 @@
 package io.github.xiewinson.easyrouter.library;
 
+import android.content.Context;
+
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.Map;
 
 import io.github.xiewinson.easyrouter.annotation.Constants;
 
@@ -10,10 +14,13 @@ import io.github.xiewinson.easyrouter.annotation.Constants;
  * Created by winson on 2017/11/29.
  */
 
-public abstract class BaseEasyRouterManager {
-    private LinkedHashMap<Class, Constructor<?>> paramInjectorMap = new LinkedHashMap<>();
+public class EasyRouter {
 
-    protected void injectIntentParamsInternal(Object object) {
+    private static Map<Class<?>, Constructor<?>> paramInjectorMap = new LinkedHashMap<>();
+    private static Map<String, Class<?>> routerMap = new HashMap<>();
+
+    public static void injectIntentParams(Object object) {
+
         Class<?> key = object.getClass();
         Constructor<?> constructor = paramInjectorMap.get(key);
         if (constructor == null) {
@@ -43,6 +50,23 @@ public abstract class BaseEasyRouterManager {
             }
         }
 
+    }
+
+    public static void init(IRouterTable... tables) {
+        for (IRouterTable table : tables) {
+            table.insertInto(routerMap);
+        }
+    }
+
+    public static ActivityRequest.Builder<ActivityRequest.Builder> activity(Context context, String path) {
+        Class<?> activityClass = routerMap.get(path);
+        return new ActivityRequest.Builder<>(context, activityClass);
+    }
+
+
+    public static FragmentRequest.Builder<Object, FragmentRequest.Builder> fragment(String path) {
+        Class<Object> fragmentClass = (Class<Object>) routerMap.get(path);
+        return new FragmentRequest.Builder<>(fragmentClass);
     }
 
 }

@@ -24,6 +24,7 @@ import javax.lang.model.element.Element;
 import javax.lang.model.element.ElementKind;
 import javax.lang.model.element.Modifier;
 import javax.lang.model.element.TypeElement;
+import javax.lang.model.type.TypeMirror;
 import javax.lang.model.util.Elements;
 import javax.lang.model.util.Types;
 import javax.tools.Diagnostic;
@@ -40,7 +41,7 @@ public class EasyRouterProcessor extends AbstractProcessor {
     private Types typeUtl;
     private Elements elementUtils;
     private ProcessingEnvironment environment;
-
+    private String routerTableName;
     private List<String> paths = new ArrayList<>();
 
 
@@ -49,10 +50,12 @@ public class EasyRouterProcessor extends AbstractProcessor {
         super.init(processingEnvironment);
         this.messager = processingEnvironment.getMessager();
         this.environment = processingEnvironment;
-        print(processingEnvironment.getOptions().toString());
         filer = processingEnvironment.getFiler();
         typeUtl = processingEnvironment.getTypeUtils();
         elementUtils = processingEnvironment.getElementUtils();
+
+        routerTableName = TextUtil.upperCaseFirstChar(processingEnvironment.getOptions().get(Constants.MODULE_NAME))
+                + Constants.ROUTER_TABLE;
     }
 
 
@@ -66,7 +69,7 @@ public class EasyRouterProcessor extends AbstractProcessor {
     private TypeSpec.Builder buildInnerRouter(String innerRouterClsName) {
         ClassName className = ClassName.get("", innerRouterClsName);
         return TypeSpec.classBuilder(innerRouterClsName)
-                .addModifiers(Modifier.PUBLIC, Modifier.FINAL)
+                .addModifiers(Modifier.PUBLIC, Modifier.STATIC, Modifier.FINAL)
                 .addMethod(MethodSpec.constructorBuilder().addModifiers(Modifier.PRIVATE).build())
                 .addField(FieldSpec.builder(className, "instance", Modifier.PRIVATE, Modifier.STATIC).build())
                 .addMethod(MethodSpec.methodBuilder("getInstance")
@@ -86,9 +89,9 @@ public class EasyRouterProcessor extends AbstractProcessor {
         if (elements.isEmpty()) return;
 
         //建立EasyRouter类
-        ClassName easyRouterClsName = ClassName.get("", Constants.EASY_ROUTER_MANAGER);
+        ClassName easyRouterClsName = ClassName.get("", routerTableName);
         TypeSpec.Builder easyRouter = TypeSpec.classBuilder(easyRouterClsName)
-                .superclass(ClassName.get(Constants.LIBRARY_PACKAGE_NAME, Constants.BASE_EASY_ROUTER))
+//                .superclass(ClassName.get(Constants.LIBRARY_PACKAGE_NAME, Constants.BASE_EASY_ROUTER))
                 .addField(FieldSpec.builder(easyRouterClsName, "instance", Modifier.PRIVATE, Modifier.STATIC).build())
                 .addMethod(MethodSpec.methodBuilder("getInstance")
                         .addModifiers(Modifier.PUBLIC, Modifier.STATIC, Modifier.SYNCHRONIZED)
@@ -98,12 +101,12 @@ public class EasyRouterProcessor extends AbstractProcessor {
                         .endControlFlow()
                         .addStatement("return instance")
                         .build())
-                .addMethod(MethodSpec.methodBuilder("injectIntentParams")
-                        .addModifiers(Modifier.PUBLIC, Modifier.STATIC)
-                        .addParameter(TypeName.OBJECT, "obj")
-                        .returns(void.class)
-                        .addStatement("getInstance().injectIntentParamsInternal(obj)")
-                        .build())
+////                .addMethod(MethodSpec.methodBuilder("injectIntentParams")
+////                        .addModifiers(Modifier.PUBLIC, Modifier.STATIC)
+////                        .addParameter(TypeName.OBJECT, "obj")
+////                        .returns(void.class)
+////                        .addStatement("getInstance().injectIntentParamsInternal(obj)")
+//                        .build())
                 .addModifiers(Modifier.PUBLIC);
 
         //ActivityRouter、FragmentRouter
@@ -123,7 +126,6 @@ public class EasyRouterProcessor extends AbstractProcessor {
                 .build());
 
         for (Element routerClassElem : elements) {
-
             if (routerClassElem.getKind() != ElementKind.CLASS) continue;
 
             TypeUtil.RouterClass routerClassType = TypeUtil.getRouterClassType(processingEnv, routerClassElem.asType());
@@ -153,22 +155,22 @@ public class EasyRouterProcessor extends AbstractProcessor {
 
             if (routerClassType == TypeUtil.RouterClass.ACTIVITY) {
                 requestBuilder
-                        .superclass(ClassName.get(Constants.LIBRARY_PACKAGE_NAME + Constants.DOT + Constants.ACTIVITY_REQUEST, Constants.BUILDER))
+                        .superclass(ParameterizedTypeName.get(ClassName.get(Constants.LIBRARY_PACKAGE_NAME + Constants.DOT + Constants.ACTIVITY_REQUEST, Constants.BUILDER), innerClsName))
                         .addMethod(
                                 MethodSpec.constructorBuilder()
                                         .addModifiers(Modifier.PRIVATE)
                                         .addParameter(context, "context")
-                                        .addStatement("super(context, new $L(context, $L.class))", intent.reflectionName(), routerClassElem.asType())
+                                        .addStatement("super(context, $T.class)", routerClassElem.asType())
                                         .build());
             } else if (TypeUtil.isFragmentOrV4(routerClassType)) {
                 requestBuilder
                         .superclass(ParameterizedTypeName
                                 .get(ClassName.get(Constants.LIBRARY_PACKAGE_NAME + Constants.DOT + Constants.FRAGMENT_REQUEST, Constants.BUILDER),
-                                        ClassName.get(routerClassElem.asType())))
+                                        ClassName.get(routerClassElem.asType()), innerClsName))
                         .addMethod(
                                 MethodSpec.constructorBuilder()
                                         .addModifiers(Modifier.PRIVATE)
-                                        .addStatement("super($L.class, new android.os.Bundle())", routerClassElem.getSimpleName())
+                                        .addStatement("super($L.class)", routerClassElem.getSimpleName())
                                         .build());
             }
 
@@ -179,10 +181,10 @@ public class EasyRouterProcessor extends AbstractProcessor {
             MethodSpec.Builder activityConstructor = MethodSpec.constructorBuilder()
                     .addModifiers(Modifier.PUBLIC)
                     .addParameter(target, "target");
-            if (TypeUtil.isActivity(processingEnv, routerClassElem.asType())) {
+            if (routerClassType == TypeUtil.RouterClass.ACTIVITY) {
                 activityConstructor.addStatement("$L intent = target.getIntent()", intent.toString())
                         .addStatement("android.os.Bundle extras = intent.getExtras()");
-            } else if (TypeUtil.isFragment(processingEnv, routerClassElem.asType()) || TypeUtil.isFragmentV4(processingEnv, routerClassElem.asType())) {
+            } else if (TypeUtil.isFragmentOrV4(routerClassType)) {
                 activityConstructor.addStatement("android.os.Bundle extras = target.getArguments()");
 
             } else {
@@ -198,24 +200,24 @@ public class EasyRouterProcessor extends AbstractProcessor {
                     paramAlias = paramAlias.length() == 0 ? paramName : paramAlias;
 
                     //生成放置参数的方法
+                    TypeMirror paramType = var.asType();
+                    TypeName paramTypeName = ClassName.get(paramType);
                     MethodSpec.Builder innerMethed = MethodSpec.methodBuilder(paramName)
                             .addModifiers(Modifier.PUBLIC)
-                            .addParameter(ClassName.get(var.asType()), paramAlias)
+                            .addParameter(paramTypeName.isBoxedPrimitive() ? paramTypeName.unbox() : paramTypeName, paramAlias)
                             .returns(innerClsName);
 
                     //添加extra
-                    if (routerClassType == TypeUtil.RouterClass.ACTIVITY) {
-                        innerMethed.addStatement("getIntent().putExtra($S, $L)", paramAlias, paramAlias);
-                    } else if (TypeUtil.isFragmentOrV4(routerClassType)) {
-                    }
+                    innerMethed.addStatement("getBundle().put$L($S, $L)", BundleHelper.buildPutExtraStatement(processingEnv, paramType), paramAlias, paramAlias);
                     requestBuilder.addMethod(innerMethed.addStatement("return this").build());
 
                     //intent/arguments参数解析
-                    activityConstructor
-                            .addStatement("Object $L = extras.get($S)", paramAlias, paramAlias)
+                    activityConstructor.addStatement("Object $L = extras.get($S)", paramAlias, paramAlias)
                             .beginControlFlow("if($L != null) ", paramAlias)
-                            .addStatement("target.$L = ($L)$L", paramName, var.asType(), paramAlias)
+                            .addStatement("target.$L = ($L)$L", paramName, paramType, paramAlias)
                             .endControlFlow();
+
+//                    activityConstructor.addStatement("target.$L = " + castStr + "extras.get$L($S)", paramName, BundleHelper.buildPutExtraStatement(processingEnv, paramType), paramAlias);
                 }
             }
 
@@ -226,10 +228,9 @@ public class EasyRouterProcessor extends AbstractProcessor {
             if (routerClassType == TypeUtil.RouterClass.ACTIVITY) {
                 quickMethod
                         .addParameter(context, "context")
-                        .addStatement("return new $L(context)", innerClsName.simpleName());
+                        .addStatement("return new $T(context)", innerClsName);
             } else if (TypeUtil.isFragmentOrV4(routerClassType)) {
-                quickMethod.addStatement("return new $L()", innerClsName.simpleName());
-
+                quickMethod.addStatement("return new $T()", innerClsName);
             }
 
             //构建Builder类的快捷方法
@@ -252,8 +253,8 @@ public class EasyRouterProcessor extends AbstractProcessor {
 
         }
         try {
-            JavaFile.builder(Constants.PACKAGE_NAME, activityRouterBuilder.build()).build().writeTo(filer);
-            JavaFile.builder(Constants.PACKAGE_NAME, fragmentRouterBuilder.build()).build().writeTo(filer);
+            easyRouter.addType(activityRouterBuilder.build());
+            easyRouter.addType(fragmentRouterBuilder.build());
             JavaFile.builder(Constants.PACKAGE_NAME, easyRouter.build()).build().writeTo(filer);
         } catch (IOException e) {
             e.printStackTrace();

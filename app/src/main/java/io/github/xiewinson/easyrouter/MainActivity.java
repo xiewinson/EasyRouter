@@ -1,8 +1,8 @@
 package io.github.xiewinson.easyrouter;
 
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -15,11 +15,10 @@ import java.util.HashMap;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import io.github.xiewinson.easyrouter.annotation.Router;
-import io.github.xiewinson.easyrouter.core.EasyRouterManager;
-
+import io.github.xiewinson.easyrouter.core.AppRouterTable;
 
 @Router(path = "/main")
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends BaseActivity {
     @BindView(R.id.toolbar)
     Toolbar toolbar;
     @BindView(R.id.fab)
@@ -35,21 +34,37 @@ public class MainActivity extends AppCompatActivity {
         TextView tv = new TextView(this);
         views.add(tv);
 
+        Bundle bundle = new Bundle();
         final HashMap<U, String> map = new HashMap<>();
         findViewById(R.id.fab).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //                EasyRouter.activity().mainBuilder(MainActivity.this).build();
-//                EasyRouter
-//                        .userBuilder(MainActivity.this)
-////                        .images(views)
-//                        .name("哈哈哈")
-////                        .is(map)
-//                        .build()
-//                        .navigation();
+//                startActivity(new Intent(MainActivity.this, SecondActivity.class));
 //                new EasyRouter.ActivityRouter().mainBuilder();
-                EasyRouterManager.activity().userBuilder(MainActivity.this).bitmap(null).build();
-                EasyRouterManager.fragment().studentFragmentBuilder().bulid().asFragment();
+                HashMap<Integer, String> map = new HashMap<>();
+                ArrayList<Bitmap> bitmaps = new ArrayList<>();
+                Bitmap bitmap = Bitmap.createBitmap(100, 100, Bitmap.Config.RGB_565);
+                bitmaps.add(bitmap);
+                map.put(1, "555");
+                map.put(2, "000");
+//                EasyRouter.activity(MainActivity.this, "")
+//                        .withIntentParam(null, null).build().navigation();
+
+                AppRouterTable
+                        .activity()
+                        .userBuilder(MainActivity.this)
+                        .age(92)
+                        .name("winson")
+                        .us(map)
+                        .images(bitmaps)
+                        .bitmap(bitmap)
+                        .withIntentParam("", null)
+                        .withData(null)
+                        .build()
+                        .navigation();
+
+
+
             }
         });
     }

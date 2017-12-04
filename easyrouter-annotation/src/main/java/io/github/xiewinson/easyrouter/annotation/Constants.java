@@ -5,8 +5,10 @@ package io.github.xiewinson.easyrouter.annotation;
  */
 
 public class Constants {
+
+    public static final String MODULE_NAME = "moduleName";
+    public static final String ROUTER_TABLE = "RouterTable";
     public static final String PACKAGE_NAME = "io.github.xiewinson.easyrouter.core";
-    public static final String EASY_ROUTER_MANAGER = "EasyRouterManager";
     public static final String ACTIVITY_ROUTER = "ActivityRouter";
     public static final String FRAGMENT_ROUTER = "FragmentRouter";
 
@@ -19,4 +21,5 @@ public class Constants {
 
     public static final String _INTENT_PARAM_INJECTOR = "_IntentParamInjector";
 
+    public static final String ANDROID_OS_ = "android.os.";
 }

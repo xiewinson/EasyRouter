@@ -8,7 +8,6 @@ import android.support.v7.widget.Toolbar;
 import android.view.View;
 
 import io.github.xiewinson.easyrouter.annotation.Router;
-import io.github.xiewinson.easyrouter.core.EasyRouter;
 
 @Router(path = "second")
 public class SecondActivity extends AppCompatActivity {
@@ -24,7 +23,7 @@ public class SecondActivity extends AppCompatActivity {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
+                Snackbar.make(view, "第二个页面", Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();
             }
         });
