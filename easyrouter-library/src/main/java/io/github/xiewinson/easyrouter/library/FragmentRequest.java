@@ -3,7 +3,7 @@ package io.github.xiewinson.easyrouter.library;
 import android.app.Fragment;
 import android.os.Bundle;
 
-import io.github.xiewinson.easyrouter.library.base.BaseRequestBuilder;
+import io.github.xiewinson.easyrouter.library.base.BundleHelper;
 
 /**
  * Created by winson on 2017/11/30.
@@ -14,7 +14,7 @@ public class FragmentRequest<T> {
     private Class<T> cls;
     private Bundle bundle;
 
-    private FragmentRequest(Class<T> cls, Bundle bundle) {
+    protected FragmentRequest(Class<T> cls, Bundle bundle) {
         this.cls = cls;
         this.bundle = bundle;
     }
@@ -35,21 +35,28 @@ public class FragmentRequest<T> {
         }
     }
 
-    public static class Builder<T, B extends Builder> extends BaseRequestBuilder<B> {
+    public static class Builder<T, B> {
 
         private Class<T> cls;
+        private Bundle bundle;
 
         protected Builder(Class<T> cls) {
             this.cls = cls;
+            this.bundle = new Bundle();
+        }
+
+        @SuppressWarnings("unchecked")
+        public B withParam(String key, Object value) {
+            BundleHelper.put(bundle, key, value);
+            return (B) this;
         }
 
         public Bundle getBundle() {
             return bundle;
         }
 
-        @Override
         public FragmentRequest<T> build() {
-            return new FragmentRequest<>(cls, getBundle());
+            return new FragmentRequest<>(cls, bundle);
         }
     }
 }

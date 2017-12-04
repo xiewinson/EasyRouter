@@ -1,11 +1,9 @@
 package io.github.xiewinson.easyrouter.library;
 
 import android.content.Context;
-import android.content.Intent;
-import android.os.Bundle;
+import android.support.annotation.NonNull;
 
 import io.github.xiewinson.easyrouter.library.base.IntentRequest;
-import io.github.xiewinson.easyrouter.library.callback.NavigateCallback;
 
 /**
  * Created by winson on 2017/11/29.
@@ -13,25 +11,23 @@ import io.github.xiewinson.easyrouter.library.callback.NavigateCallback;
 
 public class ActivityRequest extends IntentRequest {
 
-    public ActivityRequest(Context context, Intent intent, Bundle bundle) {
-        super(context, intent, bundle);
+    protected ActivityRequest(@NonNull RequestConfig config) {
+        super(config);
     }
 
-    @Override
-    public void navigation(NavigateCallback callback) {
-        context.startActivity(asIntent());
-
+    public void navigation(Context context) {
+        context.startActivity(asIntent(context));
     }
 
-    public static class Builder<T extends Builder> extends IntentRequest.Builder<T> {
+    public static class Builder<B extends Builder> extends IntentRequest.Builder<B> {
 
-        protected Builder(Context context, Class<?> cls) {
-            super(context, cls);
+        protected Builder(Class<?> cls) {
+            super(cls);
         }
 
         @Override
         public ActivityRequest build() {
-            return new ActivityRequest(context, getIntent(), getBundle());
+            return new ActivityRequest(config);
         }
 
     }

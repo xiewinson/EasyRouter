@@ -7,5 +7,5 @@ import java.util.Map;
  */
 
 public interface IRouterTable {
-    void insertInto(Map<String, Class<?>> map);
+    void putRoutes(Map<String, Class<?>> map);
 }

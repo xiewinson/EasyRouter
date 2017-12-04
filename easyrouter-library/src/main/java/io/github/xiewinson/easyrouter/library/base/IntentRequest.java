@@ -4,73 +4,96 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 
+import io.github.xiewinson.easyrouter.library.RequestConfig;
 import io.github.xiewinson.easyrouter.library.callback.IntentCallback;
-import io.github.xiewinson.easyrouter.library.callback.NavigateCallback;
 
 /**
  * Created by winson on 2017/11/29.
  */
 
-public abstract class IntentRequest {
+public class IntentRequest {
 
-    protected Context context;
-    protected Intent intent;
+    private RequestConfig config;
 
-    protected IntentRequest(Context context, Intent intent, Bundle bundle) {
-        this.context = context;
-        this.intent = intent;
-        this.intent.putExtras(bundle);
+    protected IntentRequest(@NonNull RequestConfig config) {
+        this.config = config;
+    }
+
+    public Intent asIntent(@Nullable Context context) {
+        return config.toIntent(context);
     }
 
     public Intent asIntent() {
-        return intent;
+        return asIntent(null);
     }
 
-    public abstract void navigation(NavigateCallback callback);
+    public static abstract class Builder<B extends Builder> {
 
-    public void navigation() {
-        navigation(null);
-    }
+        protected RequestConfig config;
 
-    public static abstract class Builder<T extends Builder> extends BaseRequestBuilder<T> {
-        protected Context context;
-        protected Intent intent;
-
-        protected Builder(Context context, Class<?> cls) {
-            this.context = context;
-            this.intent = new Intent(context, cls);
+        private Builder() {
+            config = new RequestConfig();
         }
 
-        protected Intent getIntent() {
-            return intent;
+        protected Bundle getBundle() {
+            return config.bundle;
         }
 
-        @SuppressWarnings("unchecked")
-        public T withFlags(int flags) {
-            intent.addFlags(flags);
-            return (T) this;
-        }
-
-        @SuppressWarnings("unchecked")
-        public T withAction(String action) {
-            intent.setAction(action);
-            return (T) this;
+        protected Builder(Class<?> cls) {
+            this();
+            config.clazz = cls;
         }
 
 
         @SuppressWarnings("unchecked")
-        public T withData(Uri uri) {
-            intent.setData(uri);
-            return (T) this;
+        public B withFlags(int flags) {
+            config.flags = flags;
+            return (B) this;
         }
 
         @SuppressWarnings("unchecked")
-        public T withIntentCallback(IntentCallback intentCallback) {
-            return (T) this;
+        public B withAction(String action) {
+            config.action = action;
+            return (B) this;
         }
 
-        @Override
+
+        @SuppressWarnings("unchecked")
+        public B withData(Uri uri) {
+            config.data = uri;
+            return (B) this;
+        }
+
+
+        @SuppressWarnings("unchecked")
+        public B withType(String type) {
+            config.type = type;
+            return (B) this;
+        }
+
+
+        @SuppressWarnings("unchecked")
+        public B withCategories(String[] categories) {
+            config.categories = categories;
+            return (B) this;
+        }
+
+
+        @SuppressWarnings("unchecked")
+        public B withIntentCallback(IntentCallback callback) {
+            config.callback = callback;
+            return (B) this;
+        }
+
+        @SuppressWarnings("unchecked")
+        public B withParam(String key, Object value) {
+            BundleHelper.put(config.bundle, key, value);
+            return (B) this;
+        }
+
         public abstract IntentRequest build();
     }
 }

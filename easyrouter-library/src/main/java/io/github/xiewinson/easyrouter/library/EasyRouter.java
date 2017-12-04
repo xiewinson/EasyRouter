@@ -1,6 +1,7 @@
 package io.github.xiewinson.easyrouter.library;
 
 import android.content.Context;
+import android.net.Uri;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -52,21 +53,37 @@ public class EasyRouter {
 
     }
 
-    public static void init(IRouterTable... tables) {
-        for (IRouterTable table : tables) {
-            table.insertInto(routerMap);
+    public static void init(Class<?>... tables) {
+        for (Class<?> table : tables) {
+            try {
+                Object obj = table.newInstance();
+                if (obj instanceof IRouterTable) {
+                    ((IRouterTable) obj).putRoutes(routerMap);
+                }
+
+            } catch (InstantiationException e) {
+                e.printStackTrace();
+            } catch (IllegalAccessException e) {
+                e.printStackTrace();
+            }
         }
     }
 
-    public static ActivityRequest.Builder<ActivityRequest.Builder> activity(Context context, String path) {
+    public static ActivityRequestBuilder activity(String path) {
         Class<?> activityClass = routerMap.get(path);
-        return new ActivityRequest.Builder<>(context, activityClass);
+        return new ActivityRequestBuilder(activityClass);
     }
 
+//    public static ActivityRequestBuilder activity(Uri uri) {
+//        return new ActivityRequestBuilder();
+//    }
 
-    public static FragmentRequest.Builder<Object, FragmentRequest.Builder> fragment(String path) {
-        Class<Object> fragmentClass = (Class<Object>) routerMap.get(path);
-        return new FragmentRequest.Builder<>(fragmentClass);
+    public static final class ActivityRequestBuilder extends ActivityRequest.Builder<ActivityRequestBuilder> {
+
+        protected ActivityRequestBuilder(Class<?> cls) {
+            super(cls);
+        }
     }
+
 
 }

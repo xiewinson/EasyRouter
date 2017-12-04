@@ -2,35 +2,20 @@ package io.github.xiewinson.easyrouter.library.base;
 
 import android.os.Bundle;
 import android.os.Parcelable;
+import android.support.annotation.NonNull;
 import android.util.SparseArray;
 
 import java.io.Serializable;
 import java.util.ArrayList;
 
-import io.github.xiewinson.easyrouter.library.callback.BundleCallback;
-
 /**
- * Created by winson on 2017/12/2.
+ * Created by winson on 2017/12/4.
  */
 
-public abstract class BaseRequestBuilder<T extends BaseRequestBuilder> {
+public class BundleHelper {
 
-
-    protected Bundle bundle;
-
-    protected BaseRequestBuilder() {
-        this.bundle = new Bundle();
-    }
-
-    protected Bundle getBundle() {
-        return bundle;
-    }
-
-    public abstract Object build();
-
-    @SuppressWarnings("unchecked")
-    public T withIntentParam(String key, Object value) {
-        if (key == null || value == null) return (T) this;
+    public static void put(@NonNull Bundle bundle, String key, Object value) {
+        if (key == null || value == null) return;
 
         if (value instanceof Bundle) {
             bundle.putBundle(key, (Bundle) value);
@@ -97,12 +82,5 @@ public abstract class BaseRequestBuilder<T extends BaseRequestBuilder> {
             bundle.putSerializable(key, (Serializable) value);
         }
 
-        return (T) this;
-    }
-
-    @SuppressWarnings("unchecked")
-    public T withBundleCallback(BundleCallback callback) {
-        callback.call(bundle);
-        return (T) this;
     }
 }

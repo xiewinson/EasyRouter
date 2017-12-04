@@ -14,8 +14,10 @@ import java.util.HashMap;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import io.github.xiewinson.easyrouter.annotation.Constants;
 import io.github.xiewinson.easyrouter.annotation.Router;
 import io.github.xiewinson.easyrouter.core.AppRouterTable;
+import io.github.xiewinson.easyrouter.library.EasyRouter;
 
 @Router(path = "/main")
 public class MainActivity extends BaseActivity {
@@ -47,21 +49,21 @@ public class MainActivity extends BaseActivity {
                 bitmaps.add(bitmap);
                 map.put(1, "555");
                 map.put(2, "000");
-//                EasyRouter.activity(MainActivity.this, "")
-//                        .withIntentParam(null, null).build().navigation();
+                EasyRouter.activity(Constants.ACTIVITY_PREFIX + "/user")
+                        .withParam(null, null).build().navigation(MainActivity.this);
 
-                AppRouterTable
-                        .activity()
-                        .userBuilder(MainActivity.this)
-                        .age(92)
-                        .name("winson")
-                        .us(map)
-                        .images(bitmaps)
-                        .bitmap(bitmap)
-                        .withIntentParam("", null)
-                        .withData(null)
-                        .build()
-                        .navigation();
+//                AppRouterTable
+//                        .activity()
+//                        .userBuilder(MainActivity.this)
+//                        .age(92)
+//                        .name("winson")
+//                        .us(map)
+//                        .images(bitmaps)
+//                        .bitmap(bitmap)
+//                        .withParam("", null)
+//                        .withData(null)
+//                        .build()
+//                        .navigation();
 
 
 
