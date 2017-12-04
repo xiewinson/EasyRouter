@@ -2,6 +2,7 @@ package io.github.xiewinson.easyrouter;
 
 import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.view.View;
 
 import java.lang.reflect.ParameterizedType;

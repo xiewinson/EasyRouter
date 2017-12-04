@@ -58,6 +58,6 @@ public class RequestConfig {
         if (callback != null) {
             callback.call(intent);
         }
-        return null;
+        return intent;
     }
 }

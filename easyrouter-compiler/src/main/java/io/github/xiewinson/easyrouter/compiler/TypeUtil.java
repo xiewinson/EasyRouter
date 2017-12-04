@@ -20,6 +20,11 @@ public class TypeUtil {
         return subType != null && parentType != null && processingEnvironment.getTypeUtils().isSubtype(subType.asType(), parentType.asType());
     }
 
+    public static boolean isParcelableArray(ProcessingEnvironment processingEnvironment, String subClassName) {
+        if (!subClassName.contains("[]")) return false;
+        return isSubType(processingEnvironment, getArrayHoldClassName(subClassName), PARCELABLE);
+    }
+
     public static boolean isActivity(ProcessingEnvironment processingEnvironment, TypeMirror subType) {
         return isSubType(processingEnvironment, subType, "android.app.Activity");
     }

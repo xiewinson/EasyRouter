@@ -10,6 +10,7 @@ import com.squareup.javapoet.TypeSpec;
 import com.squareup.javapoet.WildcardTypeName;
 
 import java.io.IOException;
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -148,19 +149,20 @@ public class EasyRouterProcessor extends AbstractProcessor {
                 path = routerClassElem.getSimpleName().toString();
             }
 
-            if (paths.contains(path.toLowerCase())) {
-                error("不能在注解中声明相同名称的path(不区分大小写)");
-                return;
-            } else {
-                paths.add(path.toLowerCase());
-            }
-
             String key = path;
             if (routerClassType == TypeUtil.RouterClass.ACTIVITY) {
                 key = Constants.ACTIVITY_PREFIX + path;
             } else if (TypeUtil.isFragmentOrV4(routerClassType)) {
                 key = Constants.FRAGMENT_PREFIX + path;
             }
+
+            if (paths.contains(key.toLowerCase())) {
+                error("不能在注解中声明相同名称的path(不区分大小写)");
+                return;
+            } else {
+                paths.add(key.toLowerCase());
+            }
+
             putRoutesBuilder.addStatement("map.put($S, $T.class)", key, routerClassElem.asType());
 
             ClassName intent = ClassName.get("android.content", "Intent");
@@ -229,10 +231,21 @@ public class EasyRouterProcessor extends AbstractProcessor {
                     requestBuilder.addMethod(innerMethed.addStatement("return this").build());
 
                     //intent/arguments参数解析
-                    activityConstructor.addStatement("Object $L = extras.get($S)", paramAlias, paramAlias)
-                            .beginControlFlow("if($L != null) ", paramAlias)
-                            .addStatement("target.$L = ($L)$L", paramName, paramType, paramAlias)
-                            .endControlFlow();
+                    activityConstructor.addStatement("Object $L = extras.get($S)", paramAlias, paramAlias);
+                    activityConstructor.beginControlFlow("if($L != null) ", paramAlias);
+                    if (TypeUtil.isParcelableArray(processingEnv, paramType.toString())) {
+                        String arrayHoldClassName = TypeUtil.getArrayHoldClassName(paramType.toString());
+                        activityConstructor
+                                .addStatement("$L array = ($L)$L", TypeUtil.ARRAY_PARCELABLE, TypeUtil.ARRAY_PARCELABLE, paramAlias)
+                                .addStatement("int length = array.length")
+                                .addStatement("target.$L = new $L[length]", paramName, arrayHoldClassName)
+                                .beginControlFlow("for(int i = 0; i < length; i++) ", TypeUtil.PARCELABLE)
+                                .addStatement("target.$L[i] = ($L)array[i]", paramName, arrayHoldClassName)
+                                .endControlFlow();
+                    } else {
+                        activityConstructor.addStatement("target.$L = ($L)$L", paramName, paramType, paramAlias);
+                    }
+                    activityConstructor.endControlFlow();
 
 //                    activityConstructor.addStatement("target.$L = " + castStr + "extras.get$L($S)", paramName, BundleHelper.buildPutExtraStatement(processingEnv, paramType), paramAlias);
                 }

@@ -46,25 +46,24 @@ public class MainActivity extends BaseActivity {
                 HashMap<Integer, String> map = new HashMap<>();
                 ArrayList<Bitmap> bitmaps = new ArrayList<>();
                 Bitmap bitmap = Bitmap.createBitmap(100, 100, Bitmap.Config.RGB_565);
+                Bitmap[] data = {bitmap};
                 bitmaps.add(bitmap);
                 map.put(1, "555");
                 map.put(2, "000");
-                EasyRouter.activity(Constants.ACTIVITY_PREFIX + "/user")
-                        .withParam(null, null).build().navigation(MainActivity.this);
+//                EasyRouter.activity(Constants.ACTIVITY_PREFIX + "/user")
+//                        .withParam(null, null).build().navigation(MainActivity.this);
 
-//                AppRouterTable
-//                        .activity()
-//                        .userBuilder(MainActivity.this)
-//                        .age(92)
-//                        .name("winson")
-//                        .us(map)
-//                        .images(bitmaps)
-//                        .bitmap(bitmap)
-//                        .withParam("", null)
-//                        .withData(null)
-//                        .build()
-//                        .navigation();
-
+                AppRouterTable
+                        .activity()
+                        .userBuilder()
+                        .age(92)
+                        .name("winson")
+                        .us(map)
+                        .data(data)
+                        .images(bitmaps)
+                        .bitmap(bitmap)
+                        .build()
+                        .navigation(MainActivity.this);
 
 
             }
