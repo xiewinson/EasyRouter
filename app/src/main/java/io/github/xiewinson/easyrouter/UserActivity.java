@@ -2,69 +2,60 @@ package io.github.xiewinson.easyrouter;
 
 import android.graphics.Bitmap;
 import android.os.Bundle;
-import android.os.Parcelable;
 import android.util.Size;
 import android.util.SizeF;
-import android.view.View;
 
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 
-import io.github.xiewinson.easyrouter.annotation.IntentParam;
+import io.github.xiewinson.easyrouter.annotation.BundleParam;
 import io.github.xiewinson.easyrouter.annotation.Router;
 import io.github.xiewinson.easyrouter.library.EasyRouter;
 
 @Router(path = "/user")
 public class UserActivity extends BaseActivity {
 
-    @IntentParam
+    @BundleParam
     int age;
 
-    @IntentParam
+    @BundleParam
     Integer age1;
 
-    @IntentParam("user_name")
+    @BundleParam("user_name")
     String name;
 
-    @IntentParam
+    @BundleParam
     Bitmap bitmap;
 
-    @IntentParam
+    @BundleParam
     Bitmap[] data;
 
-    @IntentParam
+    @BundleParam
     ArrayList<Bitmap> images;
 
-    @IntentParam
+    @BundleParam
     U<Bitmap> u;
 
-    @IntentParam
+    @BundleParam
     HashMap<Integer, String> us;
 
-    @IntentParam
+    @BundleParam
     ArrayList<CharSequence> uuu;
 
-    @IntentParam
+    @BundleParam
     Size size;
 
-    @IntentParam
+    @BundleParam
     SizeF sizeF;
 
-//    @IntentParam
+//    @BundleParam
 //    HashMap<U, String> is;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EasyRouter.injectIntentParams(this);
-
         setContentView(R.layout.activity_user);
-        Class<ArrayList> arrayListClass = ArrayList.class;
-        List<View> zzz = new ArrayList<>();
-        Type type = zzz.getClass().getGenericSuperclass();
-        Type[] actualTypeArguments = ((ParameterizedType) type).getActualTypeArguments();
+
     }
 }

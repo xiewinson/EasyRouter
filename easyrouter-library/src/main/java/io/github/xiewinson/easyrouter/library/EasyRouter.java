@@ -1,5 +1,13 @@
 package io.github.xiewinson.easyrouter.library;
 
+import android.app.Fragment;
+import android.net.Uri;
+import android.support.annotation.NonNull;
+import android.support.annotation.StringDef;
+
+import java.lang.annotation.Documented;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
@@ -7,6 +15,9 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 import io.github.xiewinson.easyrouter.annotation.Constants;
+import io.github.xiewinson.easyrouter.library.inner.ActivityRequestBuilder;
+import io.github.xiewinson.easyrouter.library.inner.FragmentRequestBuilder;
+import io.github.xiewinson.easyrouter.library.inner.FragmentV4RequestBuilder;
 
 /**
  * Created by winson on 2017/11/29.
@@ -16,6 +27,25 @@ public class EasyRouter {
 
     private static Map<Class<?>, Constructor<?>> paramInjectorMap = new LinkedHashMap<>();
     private static Map<String, Class<?>> routerMap = new HashMap<>();
+
+    public static String findRouteByClass(Class<?> clazz) {
+        for (Map.Entry<String, Class<?>> next : routerMap.entrySet()) {
+            if (next.getValue() == clazz) {
+                return next.getKey();
+            }
+        }
+        return null;
+    }
+
+    @Documented
+    @Retention(RetentionPolicy.SOURCE)
+    @StringDef({Constants.ACTIVITY_PREFIX, Constants.FRAGMENT_PREFIX, Constants.FRAGMENT_V4_PREFIX})
+    public @interface RouterPrefix {
+    }
+
+    public static Class<?> findClassByRoute(@RouterPrefix String prefix, String route) {
+        return routerMap.get(prefix + route);
+    }
 
     public static void injectIntentParams(Object object) {
 
@@ -66,20 +96,25 @@ public class EasyRouter {
         }
     }
 
-    public static ActivityRequestBuilder activity(String path) {
-        Class<?> activityClass = routerMap.get(path);
+    public static ActivityRequestBuilder activity(@NonNull String path) {
+        Class<?> activityClass = findClassByRoute(Constants.ACTIVITY_PREFIX, path);
         return new ActivityRequestBuilder(activityClass);
     }
 
-//    public static ActivityRequestBuilder activity(Uri uri) {
-//        return new ActivityRequestBuilder();
-//    }
+    public static ActivityRequestBuilder activity(@NonNull Uri uri) {
+        return new ActivityRequestBuilder().withData(uri);
+    }
 
-    public static final class ActivityRequestBuilder extends ActivityRequest.Builder<ActivityRequestBuilder> {
+    @SuppressWarnings("unchecked")
+    public static FragmentRequestBuilder fragment(@NonNull String path) {
+        Class<?> fragmentClass = findClassByRoute(Constants.FRAGMENT_PREFIX, path);
+        return new FragmentRequestBuilder(fragmentClass == null ? null : (Class<Fragment>) fragmentClass);
+    }
 
-        private ActivityRequestBuilder(Class<?> cls) {
-            super(cls);
-        }
+    @SuppressWarnings("unchecked")
+    public static FragmentV4RequestBuilder fragmentV4(@NonNull String path) {
+        Class<?> fragmentClass = findClassByRoute(Constants.FRAGMENT_V4_PREFIX, path);
+        return new FragmentV4RequestBuilder(fragmentClass == null ? null : (Class<android.support.v4.app.Fragment>) fragmentClass);
     }
 
 

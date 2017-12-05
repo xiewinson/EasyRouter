@@ -12,7 +12,7 @@ import io.github.xiewinson.easyrouter.library.callback.NavigateListener;
  * Created by winson on 2017/12/4.
  */
 
-public class RequestConfig {
+public class IntentConfig {
 
     public Class<?> clazz;
 

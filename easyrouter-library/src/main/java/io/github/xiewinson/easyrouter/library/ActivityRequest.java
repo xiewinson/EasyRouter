@@ -19,7 +19,7 @@ import io.github.xiewinson.easyrouter.library.callback.NavigateListener;
 
 public class ActivityRequest extends IntentRequest {
 
-    protected ActivityRequest(@NonNull RequestConfig config) {
+    protected ActivityRequest(@NonNull IntentConfig config) {
         super(config);
     }
 
@@ -65,7 +65,7 @@ public class ActivityRequest extends IntentRequest {
             ActivityCompat.startActivity(activity, intent, options);
         }
     }
-    
+
     public void navigation(@NonNull Fragment fragment, int requestCode) {
         Intent intent = checkIntent(fragment.getActivity());
         if (intent != null) {
@@ -92,6 +92,11 @@ public class ActivityRequest extends IntentRequest {
 
         protected Builder(Class<?> cls) {
             super(cls);
+        }
+
+        public Builder() {
+            super();
+
         }
 
         @Override

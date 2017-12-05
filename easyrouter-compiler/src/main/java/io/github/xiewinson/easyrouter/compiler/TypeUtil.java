@@ -38,6 +38,14 @@ public class TypeUtil {
         return isSubType(processingEnvironment, subType, "android.support.v4.app.Fragment");
     }
 
+    public static boolean isService(ProcessingEnvironment processingEnvironment, TypeMirror subType) {
+        return isSubType(processingEnvironment, subType, "android.app.Service");
+    }
+
+    public static boolean isBroadCast(ProcessingEnvironment processingEnvironment, TypeMirror subType) {
+        return isSubType(processingEnvironment, subType, "android.content.BroadcastReceiver");
+    }
+
     public static RouterClass getRouterClassType(ProcessingEnvironment processingEnvironment, TypeMirror subType) {
         if (isActivity(processingEnvironment, subType)) return RouterClass.ACTIVITY;
         if (isFragment(processingEnvironment, subType)) return RouterClass.FRAGMENT;

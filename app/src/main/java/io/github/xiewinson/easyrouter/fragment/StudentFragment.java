@@ -1,8 +1,9 @@
 package io.github.xiewinson.easyrouter.fragment;
 
-import android.app.Fragment;
 
-import io.github.xiewinson.easyrouter.annotation.IntentParam;
+import android.support.v4.app.Fragment;
+
+import io.github.xiewinson.easyrouter.annotation.BundleParam;
 import io.github.xiewinson.easyrouter.annotation.Router;
 
 /**
@@ -12,9 +13,9 @@ import io.github.xiewinson.easyrouter.annotation.Router;
 @Router()
 public class StudentFragment extends Fragment {
 
-    @IntentParam
+    @BundleParam
     int sid;
 
-    @IntentParam
+    @BundleParam
     String schoolName;
 }

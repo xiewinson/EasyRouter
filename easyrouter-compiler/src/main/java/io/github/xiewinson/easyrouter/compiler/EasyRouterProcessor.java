@@ -32,7 +32,7 @@ import javax.lang.model.util.Types;
 import javax.tools.Diagnostic;
 
 import io.github.xiewinson.easyrouter.annotation.Constants;
-import io.github.xiewinson.easyrouter.annotation.IntentParam;
+import io.github.xiewinson.easyrouter.annotation.BundleParam;
 import io.github.xiewinson.easyrouter.annotation.Router;
 
 //@AutoService(EasyRouterProcessor.class)
@@ -151,8 +151,10 @@ public class EasyRouterProcessor extends AbstractProcessor {
             String key = path;
             if (routerClassType == TypeUtil.RouterClass.ACTIVITY) {
                 key = Constants.ACTIVITY_PREFIX + path;
-            } else if (TypeUtil.isFragmentOrV4(routerClassType)) {
+            } else if (routerClassType == TypeUtil.RouterClass.FRAGMENT) {
                 key = Constants.FRAGMENT_PREFIX + path;
+            } else if (routerClassType == TypeUtil.RouterClass.FRAGMENT_V4) {
+                key = Constants.FRAGMENT_V4_PREFIX + path;
             }
 
             if (paths.contains(key.toLowerCase())) {
@@ -211,7 +213,7 @@ public class EasyRouterProcessor extends AbstractProcessor {
 
             for (Element var : routerClassElem.getEnclosedElements()) {
                 if (var.getKind() != ElementKind.FIELD) continue;
-                IntentParam param = var.getAnnotation(IntentParam.class);
+                BundleParam param = var.getAnnotation(BundleParam.class);
                 if (param != null) {
                     String paramName = var.getSimpleName().toString();
                     String paramAlias = param.value();

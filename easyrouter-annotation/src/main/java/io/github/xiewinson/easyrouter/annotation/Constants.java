@@ -26,6 +26,7 @@ public class Constants {
 
     public static final String ANDROID_OS_ = "android.os.";
 
-    public static final String ACTIVITY_PREFIX = "activity://";
-    public static final String FRAGMENT_PREFIX = "fragment://";
+    public static final String ACTIVITY_PREFIX = "activity:";
+    public static final String FRAGMENT_PREFIX = "fragment:";
+    public static final String FRAGMENT_V4_PREFIX = "fragment_v4:";
 }

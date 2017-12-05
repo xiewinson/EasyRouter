@@ -11,21 +11,22 @@ import io.github.xiewinson.easyrouter.library.base.BundleHelper;
 
 public class FragmentRequest<T> {
 
-    private Class<T> cls;
-    private Bundle bundle;
+    private FragmentConfig<T> config;
 
-    protected FragmentRequest(Class<T> cls, Bundle bundle) {
-        this.cls = cls;
-        this.bundle = bundle;
+    protected FragmentRequest(FragmentConfig<T> config) {
+        this.config = config;
     }
 
     public T asFragment() {
+        if (config.clazz == null) {
+            return null;
+        }
         try {
-            T t = cls.newInstance();
+            T t = config.clazz.newInstance();
             if (t instanceof Fragment) {
-                ((Fragment) t).setArguments(bundle);
+                ((Fragment) t).setArguments(config.bundle);
             } else if (t instanceof android.support.v4.app.Fragment) {
-                ((android.support.v4.app.Fragment) t).setArguments(bundle);
+                ((android.support.v4.app.Fragment) t).setArguments(config.bundle);
             }
             return t;
         } catch (InstantiationException e) {
@@ -36,27 +37,25 @@ public class FragmentRequest<T> {
     }
 
     public static class Builder<T, B> {
-
-        private Class<T> cls;
-        private Bundle bundle;
+        private FragmentConfig<T> config;
 
         protected Builder(Class<T> cls) {
-            this.cls = cls;
-            this.bundle = new Bundle();
+            config = new FragmentConfig<>();
+            config.clazz = cls;
         }
 
         @SuppressWarnings("unchecked")
-        public B withParam(String key, Object value) {
-            BundleHelper.put(bundle, key, value);
+        public B withBundleParam(String key, Object value) {
+            BundleHelper.put(config.bundle, key, value);
             return (B) this;
         }
 
         public Bundle getBundle() {
-            return bundle;
+            return config.bundle;
         }
 
         public FragmentRequest<T> build() {
-            return new FragmentRequest<>(cls, bundle);
+            return new FragmentRequest<>(config);
         }
     }
 }

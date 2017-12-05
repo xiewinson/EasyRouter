@@ -7,7 +7,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
-import io.github.xiewinson.easyrouter.library.RequestConfig;
+import io.github.xiewinson.easyrouter.library.IntentConfig;
 import io.github.xiewinson.easyrouter.library.callback.IntentListener;
 import io.github.xiewinson.easyrouter.library.callback.NavigateListener;
 
@@ -17,9 +17,9 @@ import io.github.xiewinson.easyrouter.library.callback.NavigateListener;
 
 public class IntentRequest {
 
-    private RequestConfig config;
+    private IntentConfig config;
 
-    protected IntentRequest(@NonNull RequestConfig config) {
+    protected IntentRequest(@NonNull IntentConfig config) {
         this.config = config;
     }
 
@@ -35,19 +35,19 @@ public class IntentRequest {
         return asIntent(null);
     }
 
-    protected RequestConfig getConfig() {
+    protected IntentConfig getConfig() {
         return config;
     }
 
     public static abstract class Builder<B extends Builder> {
 
-        private RequestConfig config;
+        private IntentConfig config;
 
-        private Builder() {
-            config = new RequestConfig();
+        protected Builder() {
+            config = new IntentConfig();
         }
 
-        public RequestConfig getConfig() {
+        public IntentConfig getConfig() {
             return config;
         }
 
@@ -59,7 +59,6 @@ public class IntentRequest {
             this();
             config.clazz = cls;
         }
-
 
         @SuppressWarnings("unchecked")
         public B withFlags(int flags) {
@@ -95,7 +94,7 @@ public class IntentRequest {
         }
 
         @SuppressWarnings("unchecked")
-        public B withParam(String key, Object value) {
+        public B withBundleParam(String key, Object value) {
             BundleHelper.put(config.bundle, key, value);
             return (B) this;
         }
