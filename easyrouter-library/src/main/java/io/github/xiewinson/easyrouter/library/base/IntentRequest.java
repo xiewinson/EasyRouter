@@ -8,7 +8,8 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
 import io.github.xiewinson.easyrouter.library.RequestConfig;
-import io.github.xiewinson.easyrouter.library.callback.IntentCallback;
+import io.github.xiewinson.easyrouter.library.callback.IntentListener;
+import io.github.xiewinson.easyrouter.library.callback.NavigateListener;
 
 /**
  * Created by winson on 2017/11/29.
@@ -23,19 +24,31 @@ public class IntentRequest {
     }
 
     public Intent asIntent(@Nullable Context context) {
-        return config.toIntent(context);
+        Intent intent = config.toIntent(context);
+        if (config.intentListener != null) {
+            config.intentListener.onCreate(intent);
+        }
+        return intent;
     }
 
     public Intent asIntent() {
         return asIntent(null);
     }
 
+    protected RequestConfig getConfig() {
+        return config;
+    }
+
     public static abstract class Builder<B extends Builder> {
 
-        protected RequestConfig config;
+        private RequestConfig config;
 
         private Builder() {
             config = new RequestConfig();
+        }
+
+        public RequestConfig getConfig() {
+            return config;
         }
 
         protected Bundle getBundle() {
@@ -81,16 +94,21 @@ public class IntentRequest {
             return (B) this;
         }
 
-
         @SuppressWarnings("unchecked")
-        public B withIntentCallback(IntentCallback callback) {
-            config.callback = callback;
+        public B withParam(String key, Object value) {
+            BundleHelper.put(config.bundle, key, value);
             return (B) this;
         }
 
         @SuppressWarnings("unchecked")
-        public B withParam(String key, Object value) {
-            BundleHelper.put(config.bundle, key, value);
+        public B intentCallback(IntentListener callback) {
+            config.intentListener = callback;
+            return (B) this;
+        }
+
+        @SuppressWarnings("unchecked")
+        public B navigateListener(NavigateListener listener) {
+            config.navigateListener = listener;
             return (B) this;
         }
 

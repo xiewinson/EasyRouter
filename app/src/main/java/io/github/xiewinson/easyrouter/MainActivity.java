@@ -6,7 +6,6 @@ import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.widget.Toolbar;
-import android.util.Size;
 import android.util.SparseArray;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -18,11 +17,9 @@ import java.util.HashMap;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import io.github.xiewinson.easyrouter.annotation.Constants;
 import io.github.xiewinson.easyrouter.annotation.Router;
 import io.github.xiewinson.easyrouter.core.AppRouterTable;
-import io.github.xiewinson.easyrouter.library.EasyRouter;
-import io.github.xiewinson.easyrouter.library.callback.IntentCallback;
+import io.github.xiewinson.easyrouter.library.callback.IntentListener;
 
 @Router(path = "/main")
 public class MainActivity extends BaseActivity {
@@ -75,9 +72,9 @@ public class MainActivity extends BaseActivity {
 //                        .withParam("data", data)
 //                        .withParam("images", bitmaps)
 //                        .withParam("bitmap", bitmap)
-                        .withIntentCallback(new IntentCallback() {
+                        .intentCallback(new IntentListener() {
                             @Override
-                            public void call(Intent intent) {
+                            public void onCreate(Intent intent) {
                                 bundle.putSparseParcelableArray(null, new SparseArray<Parcelable>());
                                 intent.putExtra("bitmap", bitmap);
                                 intent.putExtra("data", data);
@@ -91,6 +88,9 @@ public class MainActivity extends BaseActivity {
 
             }
         });
+
+
+
     }
 
     @Override

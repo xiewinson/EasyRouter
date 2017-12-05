@@ -5,7 +5,8 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 
-import io.github.xiewinson.easyrouter.library.callback.IntentCallback;
+import io.github.xiewinson.easyrouter.library.callback.IntentListener;
+import io.github.xiewinson.easyrouter.library.callback.NavigateListener;
 
 /**
  * Created by winson on 2017/12/4.
@@ -27,7 +28,9 @@ public class RequestConfig {
 
     public String[] categories;
 
-    public IntentCallback callback;
+    public IntentListener intentListener;
+
+    public NavigateListener navigateListener;
 
     public Intent toIntent(Context context) {
         Intent intent = new Intent();
@@ -53,10 +56,6 @@ public class RequestConfig {
             for (String category : categories) {
                 intent.addCategory(category);
             }
-        }
-
-        if (callback != null) {
-            callback.call(intent);
         }
         return intent;
     }

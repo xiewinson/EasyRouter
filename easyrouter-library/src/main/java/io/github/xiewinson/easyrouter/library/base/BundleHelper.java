@@ -80,7 +80,8 @@ public class BundleHelper {
             bundle.putParcelableArray(key, (Parcelable[]) value);
         } else if (value instanceof Serializable) {
             bundle.putSerializable(key, (Serializable) value);
+        } else {
+            throw new IllegalArgumentException(value.getClass() + "is not supported now, try intentListener");
         }
-
     }
 }
