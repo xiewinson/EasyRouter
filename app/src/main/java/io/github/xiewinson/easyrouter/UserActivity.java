@@ -54,7 +54,7 @@ public class UserActivity extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        EasyRouter.injectIntentParams(this);
+        EasyRouter.injectParams(this);
         setContentView(R.layout.activity_user);
 
     }

@@ -5,7 +5,10 @@ import android.content.Intent;
 import android.os.IBinder;
 
 import io.github.xiewinson.easyrouter.annotation.BundleParam;
+import io.github.xiewinson.easyrouter.annotation.Router;
+import io.github.xiewinson.easyrouter.library.EasyRouter;
 
+@Router
 public class MyService extends Service {
     @BundleParam
     String taskName;
@@ -28,6 +31,7 @@ public class MyService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
+        EasyRouter.injectParams(this, intent);
         return super.onStartCommand(intent, flags, startId);
     }
 }

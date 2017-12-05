@@ -50,6 +50,7 @@ public class TypeUtil {
         if (isActivity(processingEnvironment, subType)) return RouterClass.ACTIVITY;
         if (isFragment(processingEnvironment, subType)) return RouterClass.FRAGMENT;
         if (isFragmentV4(processingEnvironment, subType)) return RouterClass.FRAGMENT_V4;
+        if (isService(processingEnvironment, subType)) return RouterClass.SERVICE;
         return RouterClass.OTHRER;
     }
 
@@ -61,6 +62,7 @@ public class TypeUtil {
         ACTIVITY,
         FRAGMENT,
         FRAGMENT_V4,
+        SERVICE,
         OTHRER
     }
 

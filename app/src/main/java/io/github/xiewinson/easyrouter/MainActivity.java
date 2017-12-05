@@ -34,6 +34,7 @@ public class MainActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
+        ButterKnife.bind(this, this);
         setSupportActionBar(toolbar);
         final ArrayList<View> views = new ArrayList<>();
         TextView tv = new TextView(this);
@@ -82,10 +83,10 @@ public class MainActivity extends BaseActivity {
 //                        .activity(Uri.parse("test://user"))
 //                        .build()
 //                        .navigation(MainActivity.this);
+                AppRouterTable.service().myServiceBuilder().taskId(222).taskName("哈哈哈哈").build().navigation(MainActivity.this);
 
             }
         });
-
 
     }
 

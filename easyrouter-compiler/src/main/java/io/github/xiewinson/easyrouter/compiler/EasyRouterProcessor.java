@@ -31,8 +31,8 @@ import javax.lang.model.util.Elements;
 import javax.lang.model.util.Types;
 import javax.tools.Diagnostic;
 
-import io.github.xiewinson.easyrouter.annotation.Constants;
 import io.github.xiewinson.easyrouter.annotation.BundleParam;
+import io.github.xiewinson.easyrouter.annotation.Constants;
 import io.github.xiewinson.easyrouter.annotation.Router;
 
 //@AutoService(EasyRouterProcessor.class)
@@ -123,6 +123,7 @@ public class EasyRouterProcessor extends AbstractProcessor {
         //ActivityRouter、FragmentRouter
         TypeSpec.Builder activityRouterBuilder = buildInnerRouter(Constants.ACTIVITY_ROUTER);
         TypeSpec.Builder fragmentRouterBuilder = buildInnerRouter(Constants.FRAGMENT_ROUTER);
+        TypeSpec.Builder serviceRouterBuilder = buildInnerRouter(Constants.SERVICE_ROUTER);
 
         easyRouter.addMethod(MethodSpec.methodBuilder("activity")
                 .addModifiers(Modifier.STATIC, Modifier.PUBLIC)
@@ -134,6 +135,12 @@ public class EasyRouterProcessor extends AbstractProcessor {
                 .addModifiers(Modifier.STATIC, Modifier.PUBLIC)
                 .returns(ClassName.get("", Constants.FRAGMENT_ROUTER))
                 .addStatement("return $L.getInstance()", Constants.FRAGMENT_ROUTER)
+                .build());
+
+        easyRouter.addMethod(MethodSpec.methodBuilder("service")
+                .addModifiers(Modifier.STATIC, Modifier.PUBLIC)
+                .returns(ClassName.get("", Constants.SERVICE_ROUTER))
+                .addStatement("return $L.getInstance()", Constants.SERVICE_ROUTER)
                 .build());
 
         for (Element routerClassElem : elements) {
@@ -155,6 +162,8 @@ public class EasyRouterProcessor extends AbstractProcessor {
                 key = Constants.FRAGMENT_PREFIX + path;
             } else if (routerClassType == TypeUtil.RouterClass.FRAGMENT_V4) {
                 key = Constants.FRAGMENT_V4_PREFIX + path;
+            } else if (routerClassType == TypeUtil.RouterClass.SERVICE) {
+                key = Constants.SERVICE_PREFIX + path;
             }
 
             if (paths.contains(key.toLowerCase())) {
@@ -192,23 +201,31 @@ public class EasyRouterProcessor extends AbstractProcessor {
                                         .addModifiers(Modifier.PRIVATE)
                                         .addStatement("super($L.class)", routerClassElem.getSimpleName())
                                         .build());
+            } else if (routerClassType == TypeUtil.RouterClass.SERVICE) {
+                requestBuilder
+                        .superclass(ParameterizedTypeName.get(ClassName.get(Constants.LIBRARY_PACKAGE_NAME + Constants.DOT + Constants.SERVICE_REQUEST, Constants.BUILDER), innerClsName))
+                        .addMethod(
+                                MethodSpec.constructorBuilder()
+                                        .addModifiers(Modifier.PRIVATE)
+                                        .addStatement("super($T.class)", routerClassElem.asType())
+                                        .build());
             }
 
             //intent/arguments参数解析
             TypeSpec.Builder targetParamInjector = TypeSpec.classBuilder(routerClassElem.getSimpleName().toString() + Constants._INTENT_PARAM_INJECTOR);
             routerClassElem.getSimpleName();
             TypeName target = ClassName.get(routerClassElem.asType());
-            MethodSpec.Builder activityConstructor = MethodSpec.constructorBuilder()
+            MethodSpec.Builder targetConstructor = MethodSpec.constructorBuilder()
                     .addModifiers(Modifier.PUBLIC)
                     .addParameter(target, "target");
             if (routerClassType == TypeUtil.RouterClass.ACTIVITY) {
-                activityConstructor.addStatement("$L intent = target.getIntent()", intent.toString())
+                targetConstructor.addStatement("$L intent = target.getIntent()", intent.toString())
                         .addStatement("android.os.Bundle extras = intent.getExtras()");
             } else if (TypeUtil.isFragmentOrV4(routerClassType)) {
-                activityConstructor.addStatement("android.os.Bundle extras = target.getArguments()");
-
+                targetConstructor.addStatement("android.os.Bundle extras = target.getArguments()");
             } else {
-                error("inject intent param target must be activity or fragment");
+                targetConstructor.addParameter(intent, "intent");
+                targetConstructor.addStatement("android.os.Bundle extras = intent.getExtras()");
             }
 
             for (Element var : routerClassElem.getEnclosedElements()) {
@@ -232,11 +249,11 @@ public class EasyRouterProcessor extends AbstractProcessor {
                     requestBuilder.addMethod(innerMethed.addStatement("return this").build());
 
                     //intent/arguments参数解析
-                    activityConstructor.addStatement("Object $L = extras.get($S)", paramAlias, paramAlias);
-                    activityConstructor.beginControlFlow("if($L != null) ", paramAlias);
+                    targetConstructor.addStatement("Object $L = extras.get($S)", paramAlias, paramAlias);
+                    targetConstructor.beginControlFlow("if($L != null) ", paramAlias);
                     if (TypeUtil.isParcelableArray(processingEnv, paramType.toString())) {
                         String arrayHoldClassName = TypeUtil.getArrayHoldClassName(paramType.toString());
-                        activityConstructor
+                        targetConstructor
                                 .addStatement("$L array = ($L)$L", TypeUtil.ARRAY_PARCELABLE, TypeUtil.ARRAY_PARCELABLE, paramAlias)
                                 .addStatement("int length = array.length")
                                 .addStatement("target.$L = new $L[length]", paramName, arrayHoldClassName)
@@ -244,37 +261,35 @@ public class EasyRouterProcessor extends AbstractProcessor {
                                 .addStatement("target.$L[i] = ($L)array[i]", paramName, arrayHoldClassName)
                                 .endControlFlow();
                     } else {
-                        activityConstructor.addStatement("target.$L = ($L)$L", paramName, paramType, paramAlias);
+                        targetConstructor.addStatement("target.$L = ($L)$L", paramName, paramType, paramAlias);
                     }
-                    activityConstructor.endControlFlow();
+                    targetConstructor.endControlFlow();
 
 //                    activityConstructor.addStatement("target.$L = " + castStr + "extras.get$L($S)", paramName, BundleStatementHelper.buildPutExtraStatement(processingEnv, paramType), paramAlias);
                 }
             }
 
-            MethodSpec.Builder quickMethod = MethodSpec.methodBuilder(TextUtil.lowerCaseFirstChar(innerClsName.simpleName()))
-                    .addModifiers(Modifier.PUBLIC)
-                    .returns(innerClsName);
-
-            if (routerClassType == TypeUtil.RouterClass.ACTIVITY) {
-                quickMethod
-                        .addStatement("return new $T()", innerClsName);
-            } else if (TypeUtil.isFragmentOrV4(routerClassType)) {
-                quickMethod.addStatement("return new $T()", innerClsName);
-            }
-
             //构建Builder类的快捷方法
             TypeSpec requestBulder = requestBuilder.build();
+            MethodSpec.Builder quickMethod = MethodSpec.methodBuilder(TextUtil.lowerCaseFirstChar(innerClsName.simpleName()))
+                    .addModifiers(Modifier.PUBLIC)
+                    .addStatement("return new $T()", innerClsName)
+                    .returns(innerClsName);
+
             if (routerClassType == TypeUtil.RouterClass.ACTIVITY) {
                 activityRouterBuilder.addMethod(quickMethod.build());
                 activityRouterBuilder.addType(requestBulder);
             } else if (TypeUtil.isFragmentOrV4(routerClassType)) {
                 fragmentRouterBuilder.addMethod(quickMethod.build());
                 fragmentRouterBuilder.addType(requestBulder);
+            } else if (routerClassType == TypeUtil.RouterClass.SERVICE) {
+                serviceRouterBuilder.addMethod(quickMethod.build());
+                serviceRouterBuilder.addType(requestBulder);
             }
+
             try {
                 //intent/arguments参数解析
-                targetParamInjector.addMethod(activityConstructor.build());
+                targetParamInjector.addMethod(targetConstructor.build());
                 JavaFile.builder(target.toString().replace("." + routerClassElem.getSimpleName().toString(), ""),
                         targetParamInjector.build()).build().writeTo(filer);
             } catch (IOException e) {
@@ -283,9 +298,10 @@ public class EasyRouterProcessor extends AbstractProcessor {
 
         }
         try {
-            easyRouter.addMethod(putRoutesBuilder.build());
-            easyRouter.addType(activityRouterBuilder.build());
-            easyRouter.addType(fragmentRouterBuilder.build());
+            easyRouter
+                    .addMethod(putRoutesBuilder.build()).addType(activityRouterBuilder.build())
+                    .addType(fragmentRouterBuilder.build())
+                    .addType(serviceRouterBuilder.build());
             JavaFile.builder(Constants.ROUTER_TABLE_PACKAGE_NAME, easyRouter.build()).build().writeTo(filer);
         } catch (IOException e) {
             e.printStackTrace();

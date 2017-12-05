@@ -1,6 +1,8 @@
 package io.github.xiewinson.easyrouter.library;
 
+import android.app.Activity;
 import android.app.Fragment;
+import android.content.Intent;
 import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.annotation.StringDef;
@@ -47,16 +49,50 @@ public class EasyRouter {
         return routerMap.get(prefix + route);
     }
 
-    public static void injectIntentParams(Object object) {
+    public static void injectParams(@NonNull Activity activity) {
+        injectParamsInternal(activity, null);
+    }
 
+
+    public static void injectParams(@NonNull Fragment fragment) {
+        injectParamsInternal(fragment, null);
+    }
+
+    public static void injectParams(@NonNull android.support.v4.app.Fragment fragment) {
+        injectParamsInternal(fragment, null);
+    }
+
+    public static void injectParams(@NonNull Object object, @NonNull Intent intent) {
+        if (object instanceof Activity) {
+            throw new IllegalArgumentException("if the obj is Activity, use injectParams(Activity)");
+        }
+        if (object instanceof Fragment) {
+            throw new IllegalArgumentException("if the obj is Fragment, use injectParams(Fragment)");
+        }
+        if (object instanceof android.support.v4.app.Fragment) {
+            throw new IllegalArgumentException("if the obj is Fragment v4, use injectParams(Fragment)");
+        }
+        injectParamsInternal(object, intent);
+    }
+
+    private static void injectParamsInternal(@NonNull Object object, Intent intent) {
         Class<?> key = object.getClass();
         Constructor<?> constructor = paramInjectorMap.get(key);
         if (constructor == null) {
             try {
                 try {
-                    constructor = Class.forName(key.getName() + Constants._INTENT_PARAM_INJECTOR).getConstructor(key);
+                    Class<?> aClass = Class.forName(key.getName() + Constants._INTENT_PARAM_INJECTOR);
+                    if (intent != null) {
+                        constructor = aClass.getConstructor(key, Intent.class);
+                    } else {
+                        constructor = aClass.getConstructor(key);
+                    }
+
+
                     if (constructor != null) {
                         paramInjectorMap.put(key, constructor);
+                    } else {
+                        throw new IllegalArgumentException("can not find the construct in " + aClass.getName());
                     }
                 } catch (NoSuchMethodException e) {
                     e.printStackTrace();
@@ -68,7 +104,11 @@ public class EasyRouter {
 
         if (constructor != null) {
             try {
-                constructor.newInstance(object);
+                if (intent != null) {
+                    constructor.newInstance(object, intent);
+                } else {
+                    constructor.newInstance(object);
+                }
             } catch (InstantiationException e) {
                 e.printStackTrace();
             } catch (IllegalAccessException e) {
