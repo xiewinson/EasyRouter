@@ -118,27 +118,13 @@ public class EasyRouterProcessor extends AbstractProcessor {
         TypeSpec.Builder fragmentRouterBuilder = buildInnerRouter(Constants.FRAGMENT_ROUTER);
         TypeSpec.Builder serviceRouterBuilder = buildInnerRouter(Constants.SERVICE_ROUTER);
 
-        easyRouter.addMethod(MethodSpec.methodBuilder("activity")
-                .addModifiers(Modifier.STATIC, Modifier.PUBLIC)
-                .returns(ClassName.get("", Constants.ACTIVITY_ROUTER))
-                .addStatement("return $L.getInstance()", Constants.ACTIVITY_ROUTER)
-                .build());
-
-        easyRouter.addMethod(MethodSpec.methodBuilder("fragment")
-                .addModifiers(Modifier.STATIC, Modifier.PUBLIC)
-                .returns(ClassName.get("", Constants.FRAGMENT_ROUTER))
-                .addStatement("return $L.getInstance()", Constants.FRAGMENT_ROUTER)
-                .build());
-
-        easyRouter.addMethod(MethodSpec.methodBuilder("service")
-                .addModifiers(Modifier.STATIC, Modifier.PUBLIC)
-                .returns(ClassName.get("", Constants.SERVICE_ROUTER))
-                .addStatement("return $L.getInstance()", Constants.SERVICE_ROUTER)
-                .build());
+        boolean hasActivityRouter = false;
+        boolean hasServiceRouter = false;
+        boolean hasFragmentRouter = false;
 
         for (Element routerClassElem : elements) {
-            if (routerClassElem.getKind() != ElementKind.CLASS) continue;
 
+            if (routerClassElem.getKind() != ElementKind.CLASS) continue;
             TypeUtil.RouterClass routerClassType = TypeUtil.getRouterClassType(processingEnv, routerClassElem.asType());
             if (routerClassType == TypeUtil.RouterClass.OTHRER) continue;
 
@@ -231,22 +217,48 @@ public class EasyRouterProcessor extends AbstractProcessor {
                     .returns(innerClsName);
 
             if (routerClassType == TypeUtil.RouterClass.ACTIVITY) {
+                hasActivityRouter = true;
                 activityRouterBuilder.addMethod(quickMethod.build());
                 activityRouterBuilder.addType(requestBulder);
             } else if (TypeUtil.isFragmentOrV4(routerClassType)) {
+                hasFragmentRouter = true;
                 fragmentRouterBuilder.addMethod(quickMethod.build());
                 fragmentRouterBuilder.addType(requestBulder);
             } else if (routerClassType == TypeUtil.RouterClass.SERVICE) {
+                hasServiceRouter = true;
                 serviceRouterBuilder.addMethod(quickMethod.build());
                 serviceRouterBuilder.addType(requestBulder);
             }
 
         }
+
         try {
-            easyRouter
-                    .addMethod(putRoutesBuilder.build()).addType(activityRouterBuilder.build())
-                    .addType(fragmentRouterBuilder.build())
-                    .addType(serviceRouterBuilder.build());
+            easyRouter.addMethod(putRoutesBuilder.build());
+            if (hasActivityRouter) {
+                easyRouter.addMethod(MethodSpec.methodBuilder("activity")
+                        .addModifiers(Modifier.STATIC, Modifier.PUBLIC)
+                        .returns(ClassName.get("", Constants.ACTIVITY_ROUTER))
+                        .addStatement("return $L.getInstance()", Constants.ACTIVITY_ROUTER)
+                        .build());
+                easyRouter.addType(activityRouterBuilder.build());
+            }
+            if (hasFragmentRouter) {
+                easyRouter.addMethod(MethodSpec.methodBuilder("fragment")
+                        .addModifiers(Modifier.STATIC, Modifier.PUBLIC)
+                        .returns(ClassName.get("", Constants.FRAGMENT_ROUTER))
+                        .addStatement("return $L.getInstance()", Constants.FRAGMENT_ROUTER)
+                        .build());
+
+                easyRouter.addType(fragmentRouterBuilder.build());
+            }
+            if (hasServiceRouter) {
+                easyRouter.addMethod(MethodSpec.methodBuilder("service")
+                        .addModifiers(Modifier.STATIC, Modifier.PUBLIC)
+                        .returns(ClassName.get("", Constants.SERVICE_ROUTER))
+                        .addStatement("return $L.getInstance()", Constants.SERVICE_ROUTER)
+                        .build());
+                easyRouter.addType(serviceRouterBuilder.build());
+            }
             JavaFile.builder(Constants.ROUTER_TABLE_PACKAGE_NAME, easyRouter.build()).build().writeTo(filer);
         } catch (IOException e) {
             e.printStackTrace();
@@ -265,8 +277,11 @@ public class EasyRouterProcessor extends AbstractProcessor {
         return set;
     }
 
-    private void print(String msg) {
-        messager.printMessage(Diagnostic.Kind.NOTE, msg);
+    @Override
+    public Set<String> getSupportedOptions() {
+        Set<String> set = new HashSet<>();
+        set.add(Constants.MODULE_NAME);
+        return set;
     }
 
     private void error(String msg) {

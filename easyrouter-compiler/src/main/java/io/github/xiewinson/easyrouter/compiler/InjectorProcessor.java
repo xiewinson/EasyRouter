@@ -8,6 +8,7 @@ import com.squareup.javapoet.TypeName;
 import com.squareup.javapoet.TypeSpec;
 
 import java.io.IOException;
+import java.util.HashSet;
 import java.util.Set;
 
 import javax.annotation.processing.AbstractProcessor;
@@ -15,15 +16,16 @@ import javax.annotation.processing.Filer;
 import javax.annotation.processing.ProcessingEnvironment;
 import javax.annotation.processing.Processor;
 import javax.annotation.processing.RoundEnvironment;
+import javax.lang.model.SourceVersion;
 import javax.lang.model.element.Element;
 import javax.lang.model.element.ElementKind;
 import javax.lang.model.element.Modifier;
 import javax.lang.model.element.TypeElement;
 import javax.lang.model.type.TypeMirror;
+import javax.tools.Diagnostic;
 
 import io.github.xiewinson.easyrouter.annotation.Constants;
 import io.github.xiewinson.easyrouter.annotation.Param;
-import io.github.xiewinson.easyrouter.annotation.Route;
 
 /**
  * Created by winson on 2017/12/6.
@@ -34,14 +36,25 @@ public class InjectorProcessor extends AbstractProcessor {
 
     private ProcessingEnvironment processingEv;
     private ClassName intent;
+    private Set<String> completedElements = new HashSet<>();
 
     @Override
     public synchronized void init(ProcessingEnvironment processingEnvironment) {
         super.init(processingEnvironment);
         this.processingEv = processingEnvironment;
-
         intent = TypeUtil.getIntentClassName();
+    }
 
+    @Override
+    public SourceVersion getSupportedSourceVersion() {
+        return SourceVersion.latestSupported();
+    }
+
+    @Override
+    public Set<String> getSupportedAnnotationTypes() {
+        Set<String> set = new HashSet<>();
+        set.add(Param.class.getCanonicalName());
+        return set;
     }
 
     @Override
@@ -52,10 +65,15 @@ public class InjectorProcessor extends AbstractProcessor {
 
     private void handleElements(RoundEnvironment roundEnvironment, Filer filer) {
 
-        Set<? extends Element> elements = roundEnvironment.getElementsAnnotatedWith(Route.class);
-        if (elements.isEmpty()) return;
+        Set<? extends Element> elements = roundEnvironment.getElementsAnnotatedWith(Param.class);
 
-        for (Element routeClassElem : elements) {
+        if (elements.isEmpty()) return;
+        for (Element element : elements) {
+            Element routeClassElem = element.getEnclosingElement();
+            String classElemName = routeClassElem.toString();
+            if (completedElements.contains(classElemName)) continue;
+            completedElements.add(classElemName);
+
             TypeUtil.RouterClass routerClassType = TypeUtil.getRouterClassType(processingEv, routeClassElem.asType());
 
             //intent/arguments参数解析
@@ -106,16 +124,22 @@ public class InjectorProcessor extends AbstractProcessor {
                 targetConstructor.endControlFlow();
 //                    activityConstructor.addStatement("target.$L = " + castStr + "extras.get$L($S)", paramName, BundleStatementHelper.buildPutExtraStatement(processingEnv, paramType), paramAlias);
 
-                try {
-                    //intent/arguments参数解析
-                    targetParamInjector.addMethod(targetConstructor.build());
-                    JavaFile.builder(target.toString().replace("." + routeClassElem.getSimpleName().toString(), ""),
-                            targetParamInjector.build()).build().writeTo(filer);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
+
+            }
+            try {
+                //intent/arguments参数解析
+                targetParamInjector.addMethod(targetConstructor.build());
+                JavaFile.builder(target.toString().replace("." + routeClassElem.getSimpleName().toString(), ""),
+                        targetParamInjector.build()).build().writeTo(filer);
+            } catch (IOException e) {
+                e.printStackTrace();
             }
         }
+        completedElements.clear();
+    }
+
+    private void print(String msg) {
+        processingEv.getMessager().printMessage(Diagnostic.Kind.NOTE, msg);
     }
 
 }

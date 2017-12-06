@@ -13,6 +13,11 @@ android {
 
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
 
+        javaCompileOptions {
+            annotationProcessorOptions {
+                arguments = [moduleName : 'ml']
+            }
+        }
     }
 
     buildTypes {
@@ -33,7 +38,7 @@ dependencies {
     androidTestImplementation 'com.android.support.test:runner:1.0.1'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.1'
     implementation project(':easyrouter-annotation')
-//    annotationProcessor project(':easyrouter-compiler')
+    annotationProcessor project(':easyrouter-compiler')
     implementation project(':easyrouter-library')
 
 }

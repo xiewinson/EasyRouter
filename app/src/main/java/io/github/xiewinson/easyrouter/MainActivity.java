@@ -1,7 +1,6 @@
 package io.github.xiewinson.easyrouter;
 
 import android.graphics.Bitmap;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.widget.Toolbar;
@@ -81,7 +80,9 @@ public class MainActivity extends BaseActivity {
 //                        .navigation(MainActivity.this);
 //                AppRouterTable.service().myServiceBuilder().taskId(222).taskName("哈哈哈哈").build().navigation(MainActivity.this);
 
-                EasyRouter.activity(Uri.parse("test://user:8888/detail?name=winson&id=20118622&isMan=true")).build().navigation(MainActivity.this);
+                EasyRouter.activity("second").build().navigation(MainActivity.this);
+//                MLRouterTable.activity().secondBuilder().name("哈哈哈").build().navigation(MainActivity.this);
+//                EasyRouter.activity(Uri.parse("test://user:8888/detail?name=winson&id=20118622&isMan=true")).build().navigation(MainActivity.this);
             }
         });
 

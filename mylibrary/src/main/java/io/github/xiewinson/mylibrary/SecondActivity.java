@@ -7,10 +7,14 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 
+import io.github.xiewinson.easyrouter.annotation.Param;
 import io.github.xiewinson.easyrouter.annotation.Route;
 
 @Route("second")
 public class SecondActivity extends AppCompatActivity {
+
+    @Param
+    String name;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

@@ -123,7 +123,6 @@ public class TypeUtil {
 
     public static TYPE_KIND getType(ProcessingEnvironment environment, TypeMirror typeMirror) {
         String tm = typeMirror.toString();
-        System.out.println("当前 ->" + tm + "<-");
         if (tm.equals(INT) || tm.equals(INTEGER_BOX)) return TYPE_KIND.INT;
         if (tm.equals(LONG) || tm.equals(LONG_BOX)) return TYPE_KIND.LONG;
         if (tm.equals(FLOAT) || tm.equals(FLOAT_BOX)) return TYPE_KIND.FLOAT;

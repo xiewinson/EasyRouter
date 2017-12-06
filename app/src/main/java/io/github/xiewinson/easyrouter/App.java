@@ -3,6 +3,7 @@ package io.github.xiewinson.easyrouter;
 import android.app.Application;
 
 import io.github.xiewinson.easyrouter.core.AppRouterTable;
+import io.github.xiewinson.easyrouter.core.MlRouterTable;
 import io.github.xiewinson.easyrouter.library.EasyRouter;
 
 /**
@@ -14,6 +15,6 @@ public class App extends Application {
     public void onCreate() {
         super.onCreate();
 
-        EasyRouter.init(AppRouterTable.class);
+        EasyRouter.init(AppRouterTable.class, MlRouterTable.class);
     }
 }
