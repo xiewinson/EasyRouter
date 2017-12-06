@@ -78,34 +78,34 @@ public class IntentRequest {
         }
 
         @SuppressWarnings("unchecked")
-        public B withAction(String action) {
+        public B withAction(@NonNull String action) {
             config.action = action;
             return (B) this;
         }
 
 
         @SuppressWarnings("unchecked")
-        public B withData(Uri uri) {
+        public B withData(@NonNull Uri uri) {
             config.data = uri;
             return (B) this;
         }
 
 
         @SuppressWarnings("unchecked")
-        public B withType(String type) {
+        public B withType(@NonNull String type) {
             config.type = type;
             return (B) this;
         }
 
 
         @SuppressWarnings("unchecked")
-        public B withCategories(String[] categories) {
+        public B withCategories(@NonNull String[] categories) {
             config.categories = categories;
             return (B) this;
         }
 
         @SuppressWarnings("unchecked")
-        public B withParam(String key, Object value) {
+        public B withParam(@NonNull String key, Object value) {
             BundleHelper.put(config.bundle, key, value);
             return (B) this;
         }

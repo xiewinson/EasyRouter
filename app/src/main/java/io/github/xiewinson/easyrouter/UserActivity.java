@@ -2,6 +2,7 @@ package io.github.xiewinson.easyrouter;
 
 import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.util.Log;
 import android.util.Size;
 import android.util.SizeF;
 
@@ -14,6 +15,9 @@ import io.github.xiewinson.easyrouter.library.EasyRouter;
 
 @Route(value = "user")
 public class UserActivity extends BaseActivity {
+
+    @Param
+    Bundle originBundle;
 
     @Param
     int age;
@@ -34,9 +38,6 @@ public class UserActivity extends BaseActivity {
     ArrayList<Bitmap> images;
 
     @Param
-    U<Bitmap> u;
-
-    @Param
     HashMap<Integer, String> us;
 
     @Param
@@ -53,6 +54,6 @@ public class UserActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_user);
         EasyRouter.injectParams(this);
-
+        Log.d("winson", "");
     }
 }

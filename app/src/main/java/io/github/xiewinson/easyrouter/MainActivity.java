@@ -1,5 +1,6 @@
 package io.github.xiewinson.easyrouter;
 
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -15,6 +16,7 @@ import java.util.HashMap;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import io.github.xiewinson.easyrouter.annotation.Route;
+import io.github.xiewinson.easyrouter.core.AppRouterTable;
 import io.github.xiewinson.easyrouter.library.EasyRouter;
 
 @Route("/main")
@@ -36,7 +38,6 @@ public class MainActivity extends BaseActivity {
         views.add(tv);
 
         final Bundle bundle = new Bundle();
-        final HashMap<U, String> map = new HashMap<>();
         findViewById(R.id.fab).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -80,7 +81,23 @@ public class MainActivity extends BaseActivity {
 //                        .navigation(MainActivity.this);
 //                AppRouterTable.service().myServiceBuilder().taskId(222).taskName("哈哈哈哈").build().navigation(MainActivity.this);
 
-                EasyRouter.activity("second").build().navigation(MainActivity.this);
+                Bundle b = new Bundle();
+                b.putInt("age", 100);
+                EasyRouter.activity("user")
+                        .withParam("age", 25)
+                        .withParam("originBundle", b)
+                        .build()
+                        .navigation(MainActivity.this);
+//                AppRouterTable
+//                        .activity()
+//                        .userBuilder()
+//                        .age(25)
+//                        .originBundle(b)
+//                        .build()
+//                        .navigation(MainActivity.this);
+
+
+//                EasyRouter.activity("second").build().navigation(MainActivity.this);
 //                MLRouterTable.activity().secondBuilder().name("哈哈哈").build().navigation(MainActivity.this);
 //                EasyRouter.activity(Uri.parse("test://user:8888/detail?name=winson&id=20118622&isMan=true")).build().navigation(MainActivity.this);
             }
