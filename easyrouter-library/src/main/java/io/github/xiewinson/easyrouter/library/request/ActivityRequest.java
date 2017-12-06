@@ -1,4 +1,4 @@
-package io.github.xiewinson.easyrouter.library;
+package io.github.xiewinson.easyrouter.library.request;
 
 import android.app.Activity;
 import android.app.Fragment;
@@ -10,8 +10,8 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 
-import io.github.xiewinson.easyrouter.library.base.IntentRequest;
 import io.github.xiewinson.easyrouter.library.callback.NavigateListener;
+import io.github.xiewinson.easyrouter.library.config.IntentConfig;
 
 /**
  * Created by winson on 2017/11/29.

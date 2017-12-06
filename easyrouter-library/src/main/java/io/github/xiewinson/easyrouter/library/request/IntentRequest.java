@@ -1,4 +1,4 @@
-package io.github.xiewinson.easyrouter.library.base;
+package io.github.xiewinson.easyrouter.library.request;
 
 import android.content.Context;
 import android.content.Intent;
@@ -7,7 +7,8 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
-import io.github.xiewinson.easyrouter.library.IntentConfig;
+import io.github.xiewinson.easyrouter.library.util.BundleHelper;
+import io.github.xiewinson.easyrouter.library.config.IntentConfig;
 import io.github.xiewinson.easyrouter.library.callback.IntentListener;
 import io.github.xiewinson.easyrouter.library.callback.NavigateListener;
 

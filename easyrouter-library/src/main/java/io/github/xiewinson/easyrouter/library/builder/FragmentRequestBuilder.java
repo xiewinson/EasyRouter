@@ -2,7 +2,7 @@ package io.github.xiewinson.easyrouter.library.builder;
 
 import android.app.Fragment;
 
-import io.github.xiewinson.easyrouter.library.FragmentRequest;
+import io.github.xiewinson.easyrouter.library.request.FragmentRequest;
 
 /**
  * Created by winson on 2017/12/5.

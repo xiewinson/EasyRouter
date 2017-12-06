@@ -161,7 +161,7 @@ public class EasyRouterProcessor extends AbstractProcessor {
 
             if (routerClassType == TypeUtil.RouterClass.ACTIVITY) {
                 requestBuilder
-                        .superclass(ParameterizedTypeName.get(ClassName.get(Constants.LIBRARY_PACKAGE_NAME + Constants.DOT + Constants.ACTIVITY_REQUEST, Constants.BUILDER), innerClsName))
+                        .superclass(ParameterizedTypeName.get(ClassName.get(Constants.LIBRARY_PACKAGE_REQUEST_NAME + Constants.DOT + Constants.ACTIVITY_REQUEST, Constants.BUILDER), innerClsName))
                         .addMethod(
                                 MethodSpec.constructorBuilder()
                                         .addModifiers(Modifier.PRIVATE)
@@ -170,7 +170,7 @@ public class EasyRouterProcessor extends AbstractProcessor {
             } else if (TypeUtil.isFragmentOrV4(routerClassType)) {
                 requestBuilder
                         .superclass(ParameterizedTypeName
-                                .get(ClassName.get(Constants.LIBRARY_PACKAGE_NAME + Constants.DOT + Constants.FRAGMENT_REQUEST, Constants.BUILDER),
+                                .get(ClassName.get(Constants.LIBRARY_PACKAGE_REQUEST_NAME + Constants.DOT + Constants.FRAGMENT_REQUEST, Constants.BUILDER),
                                         ClassName.get(routerClassElem.asType()), innerClsName))
                         .addMethod(
                                 MethodSpec.constructorBuilder()
@@ -179,7 +179,7 @@ public class EasyRouterProcessor extends AbstractProcessor {
                                         .build());
             } else if (routerClassType == TypeUtil.RouterClass.SERVICE) {
                 requestBuilder
-                        .superclass(ParameterizedTypeName.get(ClassName.get(Constants.LIBRARY_PACKAGE_NAME + Constants.DOT + Constants.SERVICE_REQUEST, Constants.BUILDER), innerClsName))
+                        .superclass(ParameterizedTypeName.get(ClassName.get(Constants.LIBRARY_PACKAGE_REQUEST_NAME + Constants.DOT + Constants.SERVICE_REQUEST, Constants.BUILDER), innerClsName))
                         .addMethod(
                                 MethodSpec.constructorBuilder()
                                         .addModifiers(Modifier.PRIVATE)

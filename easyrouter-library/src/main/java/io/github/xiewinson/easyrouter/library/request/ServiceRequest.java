@@ -1,4 +1,4 @@
-package io.github.xiewinson.easyrouter.library;
+package io.github.xiewinson.easyrouter.library.request;
 
 import android.content.Context;
 import android.content.Intent;
@@ -6,8 +6,8 @@ import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.support.annotation.NonNull;
 
-import io.github.xiewinson.easyrouter.library.base.IntentRequest;
 import io.github.xiewinson.easyrouter.library.callback.NavigateListener;
+import io.github.xiewinson.easyrouter.library.config.IntentConfig;
 
 /**
  * Created by winson on 2017/12/5.

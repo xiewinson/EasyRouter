@@ -1,9 +1,10 @@
-package io.github.xiewinson.easyrouter.library;
+package io.github.xiewinson.easyrouter.library.request;
 
 import android.app.Fragment;
 import android.os.Bundle;
 
-import io.github.xiewinson.easyrouter.library.base.BundleHelper;
+import io.github.xiewinson.easyrouter.library.util.BundleHelper;
+import io.github.xiewinson.easyrouter.library.config.FragmentConfig;
 
 /**
  * Created by winson on 2017/11/30.

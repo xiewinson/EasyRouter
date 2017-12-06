@@ -1,4 +1,4 @@
-package io.github.xiewinson.easyrouter.library.base;
+package io.github.xiewinson.easyrouter.library.util;
 
 import android.os.Bundle;
 import android.os.Parcelable;

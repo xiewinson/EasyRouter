@@ -1,4 +1,4 @@
-package io.github.xiewinson.easyrouter.library;
+package io.github.xiewinson.easyrouter.library.config;
 
 import android.content.Context;
 import android.content.Intent;

@@ -50,8 +50,8 @@ public class MainActivity extends BaseActivity {
                 bitmaps.add(bitmap);
                 map.put(1, "555");
                 map.put(2, "000");
-                android.support.v4.app.Fragment studentFragment = EasyRouter.fragmentV4("StudentFragment")
-                        .withBundleParam(null, null).build().asFragment();
+//                android.support.v4.app.Fragment studentFragment = EasyRouter.fragmentV4("StudentFragment")
+//                        .withBundleParam(null, null).build().asFragment();
 
                 ArrayList<CharSequence> uuu = new ArrayList<>();
                 uuu.add("22");
@@ -83,18 +83,18 @@ public class MainActivity extends BaseActivity {
 
                 Bundle b = new Bundle();
                 b.putInt("age", 100);
-                EasyRouter.activity("user")
-                        .withParam("age", 25)
-                        .withParam("originBundle", b)
+//                EasyRouter.activity("user")
+//                        .withParam("age", 25)
+//                        .withParam("originBundle", b)
+//                        .build();
+//                        .navigation(MainActivity.this);
+                AppRouterTable
+                        .activity()
+                        .userBuilder()
+                        .age(25)
+                        .originBundle(b)
                         .build()
                         .navigation(MainActivity.this);
-//                AppRouterTable
-//                        .activity()
-//                        .userBuilder()
-//                        .age(25)
-//                        .originBundle(b)
-//                        .build()
-//                        .navigation(MainActivity.this);
 
 
 //                EasyRouter.activity("second").build().navigation(MainActivity.this);

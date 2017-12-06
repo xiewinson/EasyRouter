@@ -1,6 +1,6 @@
 package io.github.xiewinson.easyrouter.library.builder;
 
-import io.github.xiewinson.easyrouter.library.ServiceRequest;
+import io.github.xiewinson.easyrouter.library.request.ServiceRequest;
 
 /**
  * Created by winson on 2017/12/5.

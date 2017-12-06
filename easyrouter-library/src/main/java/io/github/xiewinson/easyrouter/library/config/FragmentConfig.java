@@ -1,4 +1,4 @@
-package io.github.xiewinson.easyrouter.library;
+package io.github.xiewinson.easyrouter.library.config;
 
 import android.os.Bundle;
 

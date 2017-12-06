@@ -157,13 +157,17 @@ public class EasyRouter {
     @SuppressWarnings("unchecked")
     public static FragmentRequestBuilder fragment(@NonNull String route) {
         Class<?> fragmentClass = findClassByRoute(Constants.FRAGMENT_PREFIX, route);
-        return new FragmentRequestBuilder(fragmentClass == null ? null : (Class<Fragment>) fragmentClass);
+        return new FragmentRequestBuilder((fragmentClass != null
+                && Fragment.class.isAssignableFrom(fragmentClass))
+                ? (Class<Fragment>) fragmentClass : null);
     }
 
     @SuppressWarnings("unchecked")
     public static FragmentV4RequestBuilder fragmentV4(@NonNull String route) {
         Class<?> fragmentClass = findClassByRoute(Constants.FRAGMENT_V4_PREFIX, route);
-        return new FragmentV4RequestBuilder(fragmentClass == null ? null : (Class<android.support.v4.app.Fragment>) fragmentClass);
+        return new FragmentV4RequestBuilder((fragmentClass != null
+                && android.support.v4.app.Fragment.class.isAssignableFrom(fragmentClass))
+                ? (Class<android.support.v4.app.Fragment>) fragmentClass : null);
     }
 
 

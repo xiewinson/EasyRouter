@@ -16,6 +16,7 @@ public class Constants {
 
     public static final String DOT = ".";
     public static final String LIBRARY_PACKAGE_NAME = "io.github.xiewinson.easyrouter.library";
+    public static final String LIBRARY_PACKAGE_REQUEST_NAME = "io.github.xiewinson.easyrouter.library.request";
 
     public static final String I_ROUTER_TABLE = "IRouterTable";
     public static final String PUT_ROUTES = "putRoutes";
