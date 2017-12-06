@@ -23,6 +23,12 @@ public class IntentRequest {
         this.config = config;
     }
 
+    /**
+     * 显式启动必须要context
+     *
+     * @param context
+     * @return
+     */
     public Intent asIntent(@Nullable Context context) {
         Intent intent = config.toIntent(context);
         if (config.intentListener != null) {
@@ -31,6 +37,11 @@ public class IntentRequest {
         return intent;
     }
 
+    /**
+     * 隐式启动不需要context
+     *
+     * @return
+     */
     public Intent asIntent() {
         return asIntent(null);
     }
@@ -94,7 +105,7 @@ public class IntentRequest {
         }
 
         @SuppressWarnings("unchecked")
-        public B withBundleParam(String key, Object value) {
+        public B withParam(String key, Object value) {
             BundleHelper.put(config.bundle, key, value);
             return (B) this;
         }

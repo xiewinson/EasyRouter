@@ -5,21 +5,21 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 
-import io.github.xiewinson.easyrouter.annotation.BundleParam;
-import io.github.xiewinson.easyrouter.annotation.Router;
+import io.github.xiewinson.easyrouter.annotation.Param;
+import io.github.xiewinson.easyrouter.annotation.Route;
 import io.github.xiewinson.easyrouter.library.EasyRouter;
 
 /**
  * Created by winson on 2017/11/30.
  */
 
-@Router
+@Route
 public class StudentFragment extends Fragment {
 
-    @BundleParam
+    @Param
     int sid;
 
-    @BundleParam
+    @Param
     String schoolName;
 
     @Override

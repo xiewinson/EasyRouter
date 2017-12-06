@@ -7,9 +7,9 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 
-import io.github.xiewinson.easyrouter.annotation.Router;
+import io.github.xiewinson.easyrouter.annotation.Route;
 
-@Router(path = "second")
+@Route(path = "second")
 public class SecondActivity extends AppCompatActivity {
 
     @Override

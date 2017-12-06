@@ -8,54 +8,51 @@ import android.util.SizeF;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import io.github.xiewinson.easyrouter.annotation.BundleParam;
-import io.github.xiewinson.easyrouter.annotation.Router;
+import io.github.xiewinson.easyrouter.annotation.Param;
+import io.github.xiewinson.easyrouter.annotation.Route;
 import io.github.xiewinson.easyrouter.library.EasyRouter;
 
-@Router(path = "/user")
+@Route(value = "user")
 public class UserActivity extends BaseActivity {
 
-    @BundleParam
+    @Param
     int age;
 
-    @BundleParam
+    @Param
     Integer age1;
 
-    @BundleParam("user_name")
+    @Param("user_name")
     String name;
 
-    @BundleParam
+    @Param
     Bitmap bitmap;
 
-    @BundleParam
+    @Param
     Bitmap[] data;
 
-    @BundleParam
+    @Param
     ArrayList<Bitmap> images;
 
-    @BundleParam
+    @Param
     U<Bitmap> u;
 
-    @BundleParam
+    @Param
     HashMap<Integer, String> us;
 
-    @BundleParam
+    @Param
     ArrayList<CharSequence> uuu;
 
-    @BundleParam
+    @Param
     Size size;
 
-    @BundleParam
+    @Param
     SizeF sizeF;
-
-//    @BundleParam
-//    HashMap<U, String> is;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        EasyRouter.injectParams(this);
         setContentView(R.layout.activity_user);
+        EasyRouter.injectParams(this);
 
     }
 }

@@ -4,16 +4,16 @@ import android.app.Service;
 import android.content.Intent;
 import android.os.IBinder;
 
-import io.github.xiewinson.easyrouter.annotation.BundleParam;
-import io.github.xiewinson.easyrouter.annotation.Router;
+import io.github.xiewinson.easyrouter.annotation.Param;
+import io.github.xiewinson.easyrouter.annotation.Route;
 import io.github.xiewinson.easyrouter.library.EasyRouter;
 
-@Router
+@Route
 public class MyService extends Service {
-    @BundleParam
+    @Param
     String taskName;
 
-    @BundleParam
+    @Param
     long taskId;
 
     public MyService() {

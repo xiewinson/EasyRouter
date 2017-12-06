@@ -1,4 +1,4 @@
-package io.github.xiewinson.easyrouter.library.inner;
+package io.github.xiewinson.easyrouter.library.builder;
 
 import io.github.xiewinson.easyrouter.library.FragmentRequest;
 

@@ -11,7 +11,7 @@ import java.lang.annotation.Target;
 
 
 @Retention(RetentionPolicy.CLASS)
-@Target(ElementType.TYPE)
-public @interface Router {
-    String path() default "";
+@Target(ElementType.FIELD)
+public @interface Param {
+    String value() default "";
 }

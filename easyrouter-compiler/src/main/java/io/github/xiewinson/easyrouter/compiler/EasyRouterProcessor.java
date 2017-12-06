@@ -31,9 +31,9 @@ import javax.lang.model.util.Elements;
 import javax.lang.model.util.Types;
 import javax.tools.Diagnostic;
 
-import io.github.xiewinson.easyrouter.annotation.BundleParam;
+import io.github.xiewinson.easyrouter.annotation.Param;
 import io.github.xiewinson.easyrouter.annotation.Constants;
-import io.github.xiewinson.easyrouter.annotation.Router;
+import io.github.xiewinson.easyrouter.annotation.Route;
 
 //@AutoService(EasyRouterProcessor.class)
 public class EasyRouterProcessor extends AbstractProcessor {
@@ -87,7 +87,7 @@ public class EasyRouterProcessor extends AbstractProcessor {
 
     private void handleElements(RoundEnvironment roundEnvironment, Filer filer) {
 
-        Set<? extends Element> elements = roundEnvironment.getElementsAnnotatedWith(Router.class);
+        Set<? extends Element> elements = roundEnvironment.getElementsAnnotatedWith(Route.class);
         if (elements.isEmpty()) return;
 
         //建立EasyRouter类
@@ -149,21 +149,21 @@ public class EasyRouterProcessor extends AbstractProcessor {
             TypeUtil.RouterClass routerClassType = TypeUtil.getRouterClassType(processingEnv, routerClassElem.asType());
             if (routerClassType == TypeUtil.RouterClass.OTHRER) continue;
 
-            Router annotation = routerClassElem.getAnnotation(Router.class);
-            String path = annotation.path();
-            if (TextUtil.isEmpty(path)) {
-                path = routerClassElem.getSimpleName().toString();
+            Route annotation = routerClassElem.getAnnotation(Route.class);
+            String ssp = annotation.value();
+            if (TextUtil.isEmpty(ssp)) {
+                ssp = routerClassElem.getSimpleName().toString();
             }
 
-            String key = path;
+            String key = ssp;
             if (routerClassType == TypeUtil.RouterClass.ACTIVITY) {
-                key = Constants.ACTIVITY_PREFIX + path;
+                key = Constants.ACTIVITY_PREFIX + ssp;
             } else if (routerClassType == TypeUtil.RouterClass.FRAGMENT) {
-                key = Constants.FRAGMENT_PREFIX + path;
+                key = Constants.FRAGMENT_PREFIX + ssp;
             } else if (routerClassType == TypeUtil.RouterClass.FRAGMENT_V4) {
-                key = Constants.FRAGMENT_V4_PREFIX + path;
+                key = Constants.FRAGMENT_V4_PREFIX + ssp;
             } else if (routerClassType == TypeUtil.RouterClass.SERVICE) {
-                key = Constants.SERVICE_PREFIX + path;
+                key = Constants.SERVICE_PREFIX + ssp;
             }
 
             if (paths.contains(key.toLowerCase())) {
@@ -179,7 +179,7 @@ public class EasyRouterProcessor extends AbstractProcessor {
             ClassName context = ClassName.get("android.content", "Context");
 
             //建立Activity和Fragment的Builder类
-            ClassName innerClsName = ClassName.get("", TextUtil.path2ClassName(path) + "Builder");
+            ClassName innerClsName = ClassName.get("", TextUtil.path2ClassName(ssp) + "Builder");
             TypeSpec.Builder requestBuilder = TypeSpec.classBuilder(innerClsName)
                     .addModifiers(Modifier.PUBLIC, Modifier.STATIC);
 
@@ -230,7 +230,7 @@ public class EasyRouterProcessor extends AbstractProcessor {
 
             for (Element var : routerClassElem.getEnclosedElements()) {
                 if (var.getKind() != ElementKind.FIELD) continue;
-                BundleParam param = var.getAnnotation(BundleParam.class);
+                Param param = var.getAnnotation(Param.class);
                 if (param != null) {
                     String paramName = var.getSimpleName().toString();
                     String paramAlias = param.value();
@@ -316,7 +316,7 @@ public class EasyRouterProcessor extends AbstractProcessor {
     @Override
     public Set<String> getSupportedAnnotationTypes() {
         Set<String> set = new HashSet<>();
-        set.add(Router.class.getCanonicalName());
+        set.add(Route.class.getCanonicalName());
         return set;
     }
 

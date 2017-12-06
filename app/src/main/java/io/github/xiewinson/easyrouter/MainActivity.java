@@ -1,6 +1,5 @@
 package io.github.xiewinson.easyrouter;
 
-import android.app.Fragment;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
@@ -16,13 +15,10 @@ import java.util.HashMap;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import io.github.xiewinson.easyrouter.annotation.Constants;
-import io.github.xiewinson.easyrouter.annotation.Router;
-import io.github.xiewinson.easyrouter.core.AppRouterTable;
-import io.github.xiewinson.easyrouter.fragment.StudentFragment;
+import io.github.xiewinson.easyrouter.annotation.Route;
 import io.github.xiewinson.easyrouter.library.EasyRouter;
 
-@Router(path = "/main")
+@Route("/main")
 public class MainActivity extends BaseActivity {
     @BindView(R.id.toolbar)
     Toolbar toolbar;
@@ -83,8 +79,9 @@ public class MainActivity extends BaseActivity {
 //                        .activity(Uri.parse("test://user"))
 //                        .build()
 //                        .navigation(MainActivity.this);
-                AppRouterTable.service().myServiceBuilder().taskId(222).taskName("哈哈哈哈").build().navigation(MainActivity.this);
+//                AppRouterTable.service().myServiceBuilder().taskId(222).taskName("哈哈哈哈").build().navigation(MainActivity.this);
 
+                EasyRouter.activity(Uri.parse("test://user:8888/detail?name=winson&id=20118622&isMan=true")).build().navigation(MainActivity.this);
             }
         });
 
