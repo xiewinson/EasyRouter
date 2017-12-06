@@ -9,7 +9,7 @@ import android.view.View;
 
 import io.github.xiewinson.easyrouter.annotation.Route;
 
-@Route(path = "second")
+@Route("second")
 public class SecondActivity extends AppCompatActivity {
 
     @Override

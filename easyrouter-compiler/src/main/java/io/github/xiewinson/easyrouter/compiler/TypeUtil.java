@@ -1,5 +1,7 @@
 package io.github.xiewinson.easyrouter.compiler;
 
+import com.squareup.javapoet.ClassName;
+
 import javax.annotation.processing.ProcessingEnvironment;
 import javax.lang.model.element.TypeElement;
 import javax.lang.model.type.TypeMirror;
@@ -9,6 +11,12 @@ import javax.lang.model.type.TypeMirror;
  */
 
 public class TypeUtil {
+
+    public static ClassName getIntentClassName() {
+        return ClassName.get("android.content", "Intent");
+
+    }
+
     public static boolean isSubType(ProcessingEnvironment processingEnvironment, TypeMirror subType, String parentClassName) {
         TypeElement parentType = processingEnvironment.getElementUtils().getTypeElement(parentClassName);
         return parentType != null && processingEnvironment.getTypeUtils().isSubtype(subType, parentType.asType());
@@ -40,10 +48,6 @@ public class TypeUtil {
 
     public static boolean isService(ProcessingEnvironment processingEnvironment, TypeMirror subType) {
         return isSubType(processingEnvironment, subType, "android.app.Service");
-    }
-
-    public static boolean isBroadCast(ProcessingEnvironment processingEnvironment, TypeMirror subType) {
-        return isSubType(processingEnvironment, subType, "android.content.BroadcastReceiver");
     }
 
     public static RouterClass getRouterClassType(ProcessingEnvironment processingEnvironment, TypeMirror subType) {

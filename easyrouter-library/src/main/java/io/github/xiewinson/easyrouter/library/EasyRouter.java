@@ -30,14 +30,15 @@ public class EasyRouter {
 
     private static Map<Class<?>, Constructor<?>> paramInjectorMap = new LinkedHashMap<>();
     private static Map<String, Class<?>> routerMap = new HashMap<>();
+    private static Map<Class<?>, String> classMap = new HashMap<>();
 
     public static String findRouteByClass(Class<?> clazz) {
-        for (Map.Entry<String, Class<?>> next : routerMap.entrySet()) {
-            if (next.getValue() == clazz) {
-                return next.getKey();
+        if (classMap.size() != routerMap.size()) {
+            for (Map.Entry<String, Class<?>> item : routerMap.entrySet()) {
+                classMap.put(item.getValue(), item.getKey());
             }
         }
-        return null;
+        return classMap.get(clazz);
     }
 
     @Documented
@@ -127,6 +128,8 @@ public class EasyRouter {
                 Object obj = table.newInstance();
                 if (obj instanceof IRouterTable) {
                     ((IRouterTable) obj).putRoutes(routerMap);
+                } else {
+                    throw new IllegalArgumentException("init method need IRouterTable' class its parameter");
                 }
 
             } catch (InstantiationException e) {

@@ -1,5 +1,6 @@
 package io.github.xiewinson.easyrouter.compiler;
 
+import com.google.auto.service.AutoService;
 import com.squareup.javapoet.ClassName;
 import com.squareup.javapoet.FieldSpec;
 import com.squareup.javapoet.JavaFile;
@@ -20,6 +21,7 @@ import javax.annotation.processing.AbstractProcessor;
 import javax.annotation.processing.Filer;
 import javax.annotation.processing.Messager;
 import javax.annotation.processing.ProcessingEnvironment;
+import javax.annotation.processing.Processor;
 import javax.annotation.processing.RoundEnvironment;
 import javax.lang.model.SourceVersion;
 import javax.lang.model.element.Element;
@@ -27,34 +29,25 @@ import javax.lang.model.element.ElementKind;
 import javax.lang.model.element.Modifier;
 import javax.lang.model.element.TypeElement;
 import javax.lang.model.type.TypeMirror;
-import javax.lang.model.util.Elements;
-import javax.lang.model.util.Types;
 import javax.tools.Diagnostic;
 
-import io.github.xiewinson.easyrouter.annotation.Param;
 import io.github.xiewinson.easyrouter.annotation.Constants;
+import io.github.xiewinson.easyrouter.annotation.Param;
 import io.github.xiewinson.easyrouter.annotation.Route;
 
-//@AutoService(EasyRouterProcessor.class)
+@AutoService(Processor.class)
 public class EasyRouterProcessor extends AbstractProcessor {
 
     private Messager messager;
     private Filer filer;
-    private Types typeUtl;
-    private Elements elementUtils;
-    private ProcessingEnvironment environment;
     private String routerTableName;
     private List<String> paths = new ArrayList<>();
-
 
     @Override
     public synchronized void init(ProcessingEnvironment processingEnvironment) {
         super.init(processingEnvironment);
         this.messager = processingEnvironment.getMessager();
-        this.environment = processingEnvironment;
         filer = processingEnvironment.getFiler();
-        typeUtl = processingEnvironment.getTypeUtils();
-        elementUtils = processingEnvironment.getElementUtils();
 
         routerTableName = TextUtil.upperCaseFirstChar(processingEnvironment.getOptions().get(Constants.MODULE_NAME))
                 + Constants.ROUTER_TABLE;
@@ -175,9 +168,6 @@ public class EasyRouterProcessor extends AbstractProcessor {
 
             putRoutesBuilder.addStatement("map.put($S, $T.class)", key, routerClassElem.asType());
 
-            ClassName intent = ClassName.get("android.content", "Intent");
-            ClassName context = ClassName.get("android.content", "Context");
-
             //建立Activity和Fragment的Builder类
             ClassName innerClsName = ClassName.get("", TextUtil.path2ClassName(ssp) + "Builder");
             TypeSpec.Builder requestBuilder = TypeSpec.classBuilder(innerClsName)
@@ -211,62 +201,26 @@ public class EasyRouterProcessor extends AbstractProcessor {
                                         .build());
             }
 
-            //intent/arguments参数解析
-            TypeSpec.Builder targetParamInjector = TypeSpec.classBuilder(routerClassElem.getSimpleName().toString() + Constants._INTENT_PARAM_INJECTOR);
-            routerClassElem.getSimpleName();
-            TypeName target = ClassName.get(routerClassElem.asType());
-            MethodSpec.Builder targetConstructor = MethodSpec.constructorBuilder()
-                    .addModifiers(Modifier.PUBLIC)
-                    .addParameter(target, "target");
-            if (routerClassType == TypeUtil.RouterClass.ACTIVITY) {
-                targetConstructor.addStatement("$L intent = target.getIntent()", intent.toString())
-                        .addStatement("android.os.Bundle extras = intent.getExtras()");
-            } else if (TypeUtil.isFragmentOrV4(routerClassType)) {
-                targetConstructor.addStatement("android.os.Bundle extras = target.getArguments()");
-            } else {
-                targetConstructor.addParameter(intent, "intent");
-                targetConstructor.addStatement("android.os.Bundle extras = intent.getExtras()");
-            }
 
             for (Element var : routerClassElem.getEnclosedElements()) {
                 if (var.getKind() != ElementKind.FIELD) continue;
                 Param param = var.getAnnotation(Param.class);
-                if (param != null) {
-                    String paramName = var.getSimpleName().toString();
-                    String paramAlias = param.value();
-                    paramAlias = paramAlias.length() == 0 ? paramName : paramAlias;
+                if (param == null) continue;
+                String paramName = var.getSimpleName().toString();
+                String paramAlias = param.value();
+                paramAlias = paramAlias.length() == 0 ? paramName : paramAlias;
 
-                    //生成放置参数的方法
-                    TypeMirror paramType = var.asType();
-                    TypeName paramTypeName = ClassName.get(paramType);
-                    MethodSpec.Builder innerMethed = MethodSpec.methodBuilder(paramName)
-                            .addModifiers(Modifier.PUBLIC)
-                            .addParameter(paramTypeName.isBoxedPrimitive() ? paramTypeName.unbox() : paramTypeName, paramAlias)
-                            .returns(innerClsName);
+                //生成放置参数的方法
+                TypeMirror paramType = var.asType();
+                TypeName paramTypeName = ClassName.get(paramType);
+                MethodSpec.Builder innerMethed = MethodSpec.methodBuilder(paramName)
+                        .addModifiers(Modifier.PUBLIC)
+                        .addParameter(paramTypeName.isBoxedPrimitive() ? paramTypeName.unbox() : paramTypeName, paramAlias)
+                        .returns(innerClsName);
 
-                    //添加extra
-                    innerMethed.addStatement("getBundle().put$L($S, $L)", BundleStatementHelper.buildPutExtraStatement(processingEnv, paramType), paramAlias, paramAlias);
-                    requestBuilder.addMethod(innerMethed.addStatement("return this").build());
-
-                    //intent/arguments参数解析
-                    targetConstructor.addStatement("Object $L = extras.get($S)", paramAlias, paramAlias);
-                    targetConstructor.beginControlFlow("if($L != null) ", paramAlias);
-                    if (TypeUtil.isParcelableArray(processingEnv, paramType.toString())) {
-                        String arrayHoldClassName = TypeUtil.getArrayHoldClassName(paramType.toString());
-                        targetConstructor
-                                .addStatement("$L array = ($L)$L", TypeUtil.ARRAY_PARCELABLE, TypeUtil.ARRAY_PARCELABLE, paramAlias)
-                                .addStatement("int length = array.length")
-                                .addStatement("target.$L = new $L[length]", paramName, arrayHoldClassName)
-                                .beginControlFlow("for(int i = 0; i < length; i++) ", TypeUtil.PARCELABLE)
-                                .addStatement("target.$L[i] = ($L)array[i]", paramName, arrayHoldClassName)
-                                .endControlFlow();
-                    } else {
-                        targetConstructor.addStatement("target.$L = ($L)$L", paramName, paramType, paramAlias);
-                    }
-                    targetConstructor.endControlFlow();
-
-//                    activityConstructor.addStatement("target.$L = " + castStr + "extras.get$L($S)", paramName, BundleStatementHelper.buildPutExtraStatement(processingEnv, paramType), paramAlias);
-                }
+                //添加extra
+                innerMethed.addStatement("getBundle().put$L($S, $L)", BundleStatementHelper.buildPutExtraStatement(processingEnv, paramType), paramAlias, paramAlias);
+                requestBuilder.addMethod(innerMethed.addStatement("return this").build());
             }
 
             //构建Builder类的快捷方法
@@ -285,15 +239,6 @@ public class EasyRouterProcessor extends AbstractProcessor {
             } else if (routerClassType == TypeUtil.RouterClass.SERVICE) {
                 serviceRouterBuilder.addMethod(quickMethod.build());
                 serviceRouterBuilder.addType(requestBulder);
-            }
-
-            try {
-                //intent/arguments参数解析
-                targetParamInjector.addMethod(targetConstructor.build());
-                JavaFile.builder(target.toString().replace("." + routerClassElem.getSimpleName().toString(), ""),
-                        targetParamInjector.build()).build().writeTo(filer);
-            } catch (IOException e) {
-                e.printStackTrace();
             }
 
         }
