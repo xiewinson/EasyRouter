@@ -7,6 +7,10 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
+import java.util.Arrays;
+
+import io.github.xiewinson.easyrouter.library.EasyRouter;
+import io.github.xiewinson.easyrouter.library.Interceptor;
 import io.github.xiewinson.easyrouter.library.util.BundleHelper;
 import io.github.xiewinson.easyrouter.library.config.IntentConfig;
 import io.github.xiewinson.easyrouter.library.callback.IntentListener;
@@ -20,7 +24,7 @@ public class IntentRequest {
 
     private IntentConfig config;
 
-    protected IntentRequest(@NonNull IntentConfig config) {
+    public IntentRequest(@NonNull IntentConfig config) {
         this.config = config;
     }
 
@@ -43,7 +47,7 @@ public class IntentRequest {
      *
      * @return
      */
-    public Intent asIntent() {
+    protected Intent asIntent() {
         return asIntent(null);
     }
 
@@ -70,6 +74,13 @@ public class IntentRequest {
         protected Builder(Class<?> cls) {
             this();
             config.clazz = cls;
+            config.interceptors.addAll(EasyRouter.findInterceptorsByClass(cls));
+        }
+
+        @SuppressWarnings("unchecked")
+        public B withClass(Class clazz) {
+            config.clazz = clazz;
+            return (B) this;
         }
 
         @SuppressWarnings("unchecked")
@@ -114,6 +125,14 @@ public class IntentRequest {
         @SuppressWarnings("unchecked")
         public B intentCallback(IntentListener callback) {
             config.intentListener = callback;
+            return (B) this;
+        }
+
+        @SuppressWarnings("unchecked")
+        public B interceptor(Class<? extends Interceptor> interceptor) {
+            if (interceptor != null) {
+                config.interceptors.add(interceptor);
+            }
             return (B) this;
         }
 

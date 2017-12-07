@@ -5,6 +5,10 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import io.github.xiewinson.easyrouter.library.Interceptor;
 import io.github.xiewinson.easyrouter.library.callback.IntentListener;
 import io.github.xiewinson.easyrouter.library.callback.NavigateListener;
 
@@ -27,6 +31,8 @@ public class IntentConfig {
     public String type;
 
     public String[] categories;
+
+    public List<Class<? extends Interceptor>> interceptors = new ArrayList<>();
 
     public IntentListener intentListener;
 

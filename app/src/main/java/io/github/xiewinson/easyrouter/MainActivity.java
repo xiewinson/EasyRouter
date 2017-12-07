@@ -81,20 +81,7 @@ public class MainActivity extends BaseActivity {
 //                        .navigation(MainActivity.this);
 //                AppRouterTable.service().myServiceBuilder().taskId(222).taskName("哈哈哈哈").build().navigation(MainActivity.this);
 
-                Bundle b = new Bundle();
-                b.putInt("age", 100);
-//                EasyRouter.activity("user")
-//                        .withParam("age", 25)
-//                        .withParam("originBundle", b)
-//                        .build();
-//                        .navigation(MainActivity.this);
-                AppRouterTable
-                        .activity()
-                        .userBuilder()
-                        .age(25)
-                        .originBundle(b)
-                        .build()
-                        .navigation(MainActivity.this);
+                  startActivity(EasyRouter.buildIntent().withClass(UserActivity.class).build().asIntent(MainActivity.this));
 
 
 //                EasyRouter.activity("second").build().navigation(MainActivity.this);

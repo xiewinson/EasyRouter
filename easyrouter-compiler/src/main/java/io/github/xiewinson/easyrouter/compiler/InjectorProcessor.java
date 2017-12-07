@@ -139,7 +139,7 @@ public class InjectorProcessor extends AbstractProcessor {
     }
 
     private void print(String msg) {
-        processingEv.getMessager().printMessage(Diagnostic.Kind.NOTE, msg);
+        processingEnv.getMessager().printMessage(Diagnostic.Kind.NOTE, msg);
     }
 
 }

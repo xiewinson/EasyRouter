@@ -12,8 +12,8 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 import io.github.xiewinson.easyrouter.annotation.Constants;
@@ -21,6 +21,9 @@ import io.github.xiewinson.easyrouter.library.builder.ActivityRequestBuilder;
 import io.github.xiewinson.easyrouter.library.builder.FragmentRequestBuilder;
 import io.github.xiewinson.easyrouter.library.builder.FragmentV4RequestBuilder;
 import io.github.xiewinson.easyrouter.library.builder.ServiceRequestBuilder;
+import io.github.xiewinson.easyrouter.library.inner.IRouterTable;
+import io.github.xiewinson.easyrouter.library.request.ActivityRequest;
+import io.github.xiewinson.easyrouter.library.request.IntentRequest;
 
 /**
  * Created by winson on 2017/11/29.
@@ -28,10 +31,21 @@ import io.github.xiewinson.easyrouter.library.builder.ServiceRequestBuilder;
 
 public class EasyRouter {
 
+    /**
+     * 参数注解
+     */
     private static Map<Class<?>, Constructor<?>> paramInjectorMap = new LinkedHashMap<>();
-    private static Map<String, Class<?>> routerMap = new HashMap<>();
-    private static Map<Class<?>, String> classMap = new HashMap<>();
 
+    private static Map<String, Class<?>> routerMap = new LinkedHashMap<>();
+    private static Map<Class<?>, String> classMap = new LinkedHashMap<>();
+
+    private static Map<Class<?>, List<Class<? extends Interceptor>>> interceptorRelationsMap = new LinkedHashMap<>();
+
+    /**
+     * 通过class找到对应route
+     * @param clazz
+     * @return
+     */
     public static String findRouteByClass(Class<?> clazz) {
         if (classMap.size() != routerMap.size()) {
             for (Map.Entry<String, Class<?>> item : routerMap.entrySet()) {
@@ -47,8 +61,19 @@ public class EasyRouter {
     public @interface RouterPrefix {
     }
 
+    /**
+     * 通过route找到对应的类
+     * @param prefix
+     * @param route
+     * @return
+     */
     public static Class<?> findClassByRoute(@RouterPrefix String prefix, String route) {
         return routerMap.get(prefix + route);
+    }
+
+
+    public static List<Class<? extends Interceptor>> findInterceptorsByClass(Class<?> clazz){
+        return interceptorRelationsMap.get(clazz);
     }
 
     public static void injectParams(@NonNull Activity activity) {
@@ -127,7 +152,9 @@ public class EasyRouter {
             try {
                 Object obj = table.newInstance();
                 if (obj instanceof IRouterTable) {
-                    ((IRouterTable) obj).putRoutes(routerMap);
+                    IRouterTable routerTable = (IRouterTable) obj;
+                    routerTable.putRoutes(routerMap);
+                    routerTable.putInterceptorRelations(interceptorRelationsMap);
                 } else {
                     throw new IllegalArgumentException("init method need IRouterTable' class its parameter");
                 }
@@ -138,6 +165,15 @@ public class EasyRouter {
                 e.printStackTrace();
             }
         }
+    }
+
+    public static IntentRequest.Builder buildIntent(){
+        return new IntentRequest.Builder() {
+            @Override
+            public IntentRequest build() {
+                return new IntentRequest(getConfig());
+            }
+        };
     }
 
     public static ActivityRequestBuilder activity(@NonNull String route) {

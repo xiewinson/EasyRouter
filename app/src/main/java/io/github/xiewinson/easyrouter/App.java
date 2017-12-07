@@ -1,6 +1,7 @@
 package io.github.xiewinson.easyrouter;
 
 import android.app.Application;
+import android.net.Uri;
 
 import io.github.xiewinson.easyrouter.core.AppRouterTable;
 import io.github.xiewinson.easyrouter.core.MlRouterTable;

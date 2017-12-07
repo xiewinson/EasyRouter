@@ -10,6 +10,9 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 
+import java.util.List;
+
+import io.github.xiewinson.easyrouter.library.Interceptor;
 import io.github.xiewinson.easyrouter.library.callback.NavigateListener;
 import io.github.xiewinson.easyrouter.library.config.IntentConfig;
 
@@ -24,14 +27,34 @@ public class ActivityRequest extends IntentRequest {
     }
 
     private Intent checkIntent(@NonNull Context context) {
+        IntentConfig config = getConfig();
         Intent intent = asIntent(context);
         ActivityInfo activityInfo = intent.resolveActivityInfo(context.getPackageManager(), PackageManager.MATCH_DEFAULT_ONLY);
         boolean result = activityInfo != null;
-        NavigateListener listener = getConfig().navigateListener;
+        NavigateListener listener = config.navigateListener;
         if (listener != null) {
             listener.onNavigate(intent, result);
         }
+        List<Class<? extends Interceptor>> interceptors = config.interceptors;
+        for (Class<? extends Interceptor> interceptor : interceptors) {
+            try {
+                Interceptor instance = interceptor.newInstance();
+                if (instance != null) {
+                    boolean intercept = instance.intercept(context, intent);
+                    if (intercept) return null;
+                }
+            } catch (InstantiationException e) {
+                e.printStackTrace();
+            } catch (IllegalAccessException e) {
+                e.printStackTrace();
+            }
+        }
         return result ? intent : null;
+    }
+
+    @Override
+    public Intent asIntent() {
+        return super.asIntent();
     }
 
     public void navigation(@NonNull Context context) {
