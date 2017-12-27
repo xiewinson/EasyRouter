@@ -64,7 +64,6 @@ public class InjectorProcessor extends AbstractProcessor {
     }
 
     private void handleElements(RoundEnvironment roundEnvironment, Filer filer) {
-
         Set<? extends Element> elements = roundEnvironment.getElementsAnnotatedWith(Param.class);
 
         if (elements.isEmpty()) return;

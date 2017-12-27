@@ -52,10 +52,6 @@ public class ActivityRequest extends IntentRequest {
         return result ? intent : null;
     }
 
-    @Override
-    public Intent asIntent() {
-        return super.asIntent();
-    }
 
     public void navigation(@NonNull Context context) {
         Intent intent = checkIntent(context);

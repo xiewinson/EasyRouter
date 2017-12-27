@@ -1,9 +1,15 @@
 package io.github.xiewinson.easyrouter;
 
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.NotificationCompat;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -16,8 +22,9 @@ import java.util.HashMap;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import io.github.xiewinson.easyrouter.annotation.Route;
-import io.github.xiewinson.easyrouter.core.AppRouterTable;
 import io.github.xiewinson.easyrouter.library.EasyRouter;
+import io.github.xiewinson.easyrouter.library.Interceptor;
+import io.github.xiewinson.easyrouter.library.callback.IntentListener;
 
 @Route("/main")
 public class MainActivity extends BaseActivity {
@@ -38,58 +45,19 @@ public class MainActivity extends BaseActivity {
         views.add(tv);
 
         final Bundle bundle = new Bundle();
-        findViewById(R.id.fab).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-//                startActivity(new Intent(MainActivity.this, SecondActivity.class));
-//                new EasyRouter.ActivityRouter().mainBuilder();
-                HashMap<Integer, String> map = new HashMap<>();
-                final ArrayList<Bitmap> bitmaps = new ArrayList<>();
-                final Bitmap bitmap = Bitmap.createBitmap(100, 100, Bitmap.Config.RGB_565);
-                final Bitmap[] data = {bitmap};
-                bitmaps.add(bitmap);
-                map.put(1, "555");
-                map.put(2, "000");
-//                android.support.v4.app.Fragment studentFragment = EasyRouter.fragmentV4("StudentFragment")
-//                        .withBundleParam(null, null).build().asFragment();
+        final NotificationCompat.Builder builder = new NotificationCompat.Builder(this)
+                .setContentText("内容")
+                .setContentTitle("标题")
+                .setChannelId("sss")
+                .setSmallIcon(R.mipmap.ic_launcher);
+        final NotificationManager notification = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
 
-                ArrayList<CharSequence> uuu = new ArrayList<>();
-                uuu.add("22");
+        EasyRouter.activity(Uri.parse("test://user/discovery/sss?id=222"))
+                .interceptor(Interceptor.class)
+                .build()
+                .asIntent(this);
 
-//                AppRouterTable
-//                        .activity()
-//                        .userBuilder()
-//                        .age(92)
-//                        .name("winson")
-//                        .us(map)
-//                        .uuu(uuu)
-//                        .intentCallback(new IntentListener() {
-//                            @Override
-//                            public void onCreate(Intent intent) {
-//                                bundle.putSparseParcelableArray(null, new SparseArray<Parcelable>());
-//                                intent.putExtra("bitmap", bitmap);
-//                                intent.putExtra("data", data);
-//                                intent.putParcelableArrayListExtra("images", bitmaps);
-//                                intent.putExtra("bitmap", bitmap);
-//                            }
-//                        })
-//                        .build()
-//                        .navigation(MainActivity.this);
-//                EasyRouter
-//                        .activity(Uri.parse("test://user"))
-//                        .build()
-//                        .navigation(MainActivity.this);
-//                AppRouterTable.service().myServiceBuilder().taskId(222).taskName("哈哈哈哈").build().navigation(MainActivity.this);
-
-                  startActivity(EasyRouter.buildIntent().withClass(UserActivity.class).build().asIntent(MainActivity.this));
-
-
-//                EasyRouter.activity("second").build().navigation(MainActivity.this);
-//                MLRouterTable.activity().secondBuilder().name("哈哈哈").build().navigation(MainActivity.this);
-//                EasyRouter.activity(Uri.parse("test://user:8888/detail?name=winson&id=20118622&isMan=true")).build().navigation(MainActivity.this);
-            }
-        });
-
+        new Intent(this, UserActivity.class);
     }
 
     @Override

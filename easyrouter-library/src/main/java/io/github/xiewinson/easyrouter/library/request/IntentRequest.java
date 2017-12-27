@@ -34,7 +34,7 @@ public class IntentRequest {
      * @param context
      * @return
      */
-    public Intent asIntent(@Nullable Context context) {
+    public Intent asIntent(@NonNull Context context) {
         Intent intent = config.toIntent(context);
         if (config.intentListener != null) {
             config.intentListener.onCreate(intent);
@@ -42,14 +42,6 @@ public class IntentRequest {
         return intent;
     }
 
-    /**
-     * 隐式启动不需要context
-     *
-     * @return
-     */
-    protected Intent asIntent() {
-        return asIntent(null);
-    }
 
     protected IntentConfig getConfig() {
         return config;

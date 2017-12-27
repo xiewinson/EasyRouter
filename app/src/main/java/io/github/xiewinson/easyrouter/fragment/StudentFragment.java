@@ -13,7 +13,7 @@ import io.github.xiewinson.easyrouter.library.EasyRouter;
  * Created by winson on 2017/11/30.
  */
 
-@Route
+@Route("sss")
 public class StudentFragment extends Fragment {
 
     @Param
