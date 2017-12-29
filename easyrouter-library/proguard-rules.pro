@@ -19,3 +19,11 @@
 # If you keep the line number information, uncomment this to
 # hide the original source file name.
 #-renamesourcefileattribute SourceFile
+
+-keep class io.github.xiewinson.easyrouter.library.**
+-keep class * implements io.github.xiewinson.easyrouter.library.inner.IntentParamInjector{
+    <init>(...);
+}
+-keep class * implements io.github.xiewinson.easyrouter.library.Interceptor{
+    <init>(...);
+}

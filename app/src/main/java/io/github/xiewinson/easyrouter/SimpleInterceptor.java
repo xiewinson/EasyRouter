@@ -14,6 +14,6 @@ public class SimpleInterceptor implements Interceptor {
     @Override
     public boolean intercept(Context context, Intent intent) {
         Toast.makeText(context, "经过拦截器", Toast.LENGTH_SHORT).show();
-        return true;
+        return false;
     }
 }

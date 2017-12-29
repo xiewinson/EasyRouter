@@ -3,6 +3,7 @@ package io.github.xiewinson.easyrouter;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
+import android.widget.Toast;
 
 import io.github.xiewinson.easyrouter.annotation.Param;
 import io.github.xiewinson.easyrouter.annotation.Route;
@@ -26,12 +27,7 @@ public class UserActivity extends BaseActivity {
         setContentView(R.layout.activity_user);
         EasyRouter.injectParams(this);
 
-        Context context = this;
-
-        EasyRouter.activity(Uri.parse("app://home/discovery/trade?id=257&name=winson"))
-                .withParam("p0", "winson")
-                .build()
-                .navigation(context);
+        Toast.makeText(this, "id->" + id + " name->" + name + " age->" + age, Toast.LENGTH_SHORT).show();
 
 
     }

@@ -8,6 +8,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
 import java.util.Arrays;
+import java.util.List;
 
 import io.github.xiewinson.easyrouter.library.EasyRouter;
 import io.github.xiewinson.easyrouter.library.Interceptor;
@@ -66,7 +67,10 @@ public class IntentRequest {
         protected Builder(Class<?> cls) {
             this();
             config.clazz = cls;
-            config.interceptors.addAll(EasyRouter.findInterceptorsByClass(cls));
+            List<Class<? extends Interceptor>> interceptorsByClass = EasyRouter.findInterceptorsByClass(cls);
+            if (interceptorsByClass != null && interceptorsByClass.size() > 0) {
+                config.interceptors.addAll(interceptorsByClass);
+            }
         }
 
         @SuppressWarnings("unchecked")

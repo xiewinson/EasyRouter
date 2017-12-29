@@ -77,6 +77,7 @@ public class InjectorProcessor extends AbstractProcessor {
 
             //intent/arguments参数解析
             TypeSpec.Builder targetParamInjector = TypeSpec.classBuilder(routeClassElem.getSimpleName().toString() + Constants._INTENT_PARAM_INJECTOR);
+            targetParamInjector.addSuperinterface(ClassName.get(Constants.LIBRARY_PACKAGE_INNER, Constants.I_INTENT_PARAM_INJECTOR));
             routeClassElem.getSimpleName();
             TypeName target = ClassName.get(routeClassElem.asType());
             MethodSpec.Builder targetConstructor = MethodSpec.constructorBuilder()

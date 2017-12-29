@@ -22,6 +22,7 @@ import java.util.HashMap;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import io.github.xiewinson.easyrouter.annotation.Route;
+import io.github.xiewinson.easyrouter.core.AppRouterTable;
 import io.github.xiewinson.easyrouter.library.EasyRouter;
 import io.github.xiewinson.easyrouter.library.Interceptor;
 import io.github.xiewinson.easyrouter.library.callback.IntentListener;
@@ -38,26 +39,27 @@ public class MainActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
-        ButterKnife.bind(this, this);
         setSupportActionBar(toolbar);
         final ArrayList<View> views = new ArrayList<>();
         TextView tv = new TextView(this);
         views.add(tv);
+        findViewById(R.id.fab)
+                .setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
 
-        final Bundle bundle = new Bundle();
-        final NotificationCompat.Builder builder = new NotificationCompat.Builder(this)
-                .setContentText("内容")
-                .setContentTitle("标题")
-                .setChannelId("sss")
-                .setSmallIcon(R.mipmap.ic_launcher);
-        final NotificationManager notification = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+//                        AppRouterTable
+//                                .activity()
+//                                .userBuilder()
+//                                .age(25)
+//                                .id(123)
+//                                .name("哈哈哈")
+//                                .build()
+//                                .navigation(MainActivity.this);
+                        EasyRouter.activity("user").withParam("user_name", "谢豪").build().navigation(v.getContext());
+                    }
+                });
 
-        EasyRouter.activity(Uri.parse("test://user/discovery/sss?id=222"))
-                .interceptor(Interceptor.class)
-                .build()
-                .asIntent(this);
-
-        new Intent(this, UserActivity.class);
     }
 
     @Override
