@@ -31,7 +31,7 @@ public class Constants {
     public static final String BUILDER = "Builder";
 
     public static final String _INTENT_PARAM_INJECTOR = "_IntentParamInjector";
-    public static final String I_INTENT_PARAM_INJECTOR = "IntentParamInjector";
+    public static final String I_INTENT_PARAM_INJECTOR = "IIntentParamInjector";
 
 
     public static final String ANDROID_OS_ = "android.os.";

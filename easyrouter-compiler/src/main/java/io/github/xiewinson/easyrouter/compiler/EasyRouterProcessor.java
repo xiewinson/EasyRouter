@@ -43,21 +43,20 @@ public class EasyRouterProcessor extends AbstractProcessor {
 
     private Messager messager;
     private Filer filer;
-    private String routerTableName;
+    private String routerTableName = "";
     private List<String> paths = new ArrayList<>();
     private TypeName interceptClsListTypeName;
     private TypeName interceptClsArrayListTypeName;
+    private String moduleName;
 
     @Override
     public synchronized void init(ProcessingEnvironment processingEnvironment) {
         super.init(processingEnvironment);
         this.messager = processingEnvironment.getMessager();
         filer = processingEnvironment.getFiler();
-
         interceptClsListTypeName = ParameterizedTypeName.get(ClassName.get(List.class), ParameterizedTypeName.get(ClassName.get(Class.class), WildcardTypeName.subtypeOf(ClassName.get(Constants.LIBRARY_PACKAGE, Constants.INTERCEPTOR))));
         interceptClsArrayListTypeName = ParameterizedTypeName.get(ClassName.get(ArrayList.class), ParameterizedTypeName.get(ClassName.get(Class.class), WildcardTypeName.subtypeOf(ClassName.get(Constants.LIBRARY_PACKAGE, Constants.INTERCEPTOR))));
-        routerTableName = TextUtil.upperCaseFirstChar(processingEnvironment.getOptions().get(Constants.MODULE_NAME))
-                + Constants.ROUTER_TABLE;
+        moduleName = processingEnvironment.getOptions().get(Constants.MODULE_NAME);
     }
 
 
@@ -86,7 +85,11 @@ public class EasyRouterProcessor extends AbstractProcessor {
     }
 
     private void handleElements(RoundEnvironment roundEnvironment, Filer filer) {
-
+        if (TextUtil.isEmpty(moduleName)) {
+            error("you must set moduleName in build.gradle in module");
+        } else {
+            routerTableName = TextUtil.upperCaseFirstChar(moduleName) + Constants.ROUTER_TABLE;
+        }
         Set<? extends Element> elements = roundEnvironment.getElementsAnnotatedWith(Route.class);
         if (elements.isEmpty()) return;
 
@@ -201,10 +204,9 @@ public class EasyRouterProcessor extends AbstractProcessor {
             if (interValue != null && interValue.getValue() != null && interValue.getValue().toString().length() > 0) {
                 String str = interValue.getValue().toString();
                 putInterceptorsBuilder.addStatement("$T list = new $T()", interceptClsListTypeName, interceptClsArrayListTypeName);
-                if(!str.contains(",")) {
+                if (!str.contains(",")) {
                     putInterceptorsBuilder.addStatement("list.add($L)", str);
-                }
-                else {
+                } else {
                     String[] array = str.split(",");
                     for (String item : array) {
                         putInterceptorsBuilder.addStatement("list.add($L)", item);
