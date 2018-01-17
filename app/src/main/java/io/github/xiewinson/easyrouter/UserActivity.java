@@ -1,8 +1,7 @@
 package io.github.xiewinson.easyrouter;
 
-import android.content.Context;
-import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.widget.Toast;
 
 import io.github.xiewinson.easyrouter.annotation.Param;
@@ -21,6 +20,9 @@ public class UserActivity extends BaseActivity {
     @Param
     long id;
 
+    private Handler handler;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -28,7 +30,13 @@ public class UserActivity extends BaseActivity {
         EasyRouter.injectParams(this);
 
         Toast.makeText(this, "id->" + id + " name->" + name + " age->" + age, Toast.LENGTH_SHORT).show();
+        handler = new Handler();
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
 
+            }
+        }, 1000000);
 
     }
 }
